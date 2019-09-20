@@ -8,11 +8,11 @@
 
 ## Synthetic Dataset Creation
 
-Beginning with our final analytic files for the study, we used the [synthpop](https://cran.r-project.org/web/packages/synthpop/index.html) R package to create a synthetic version of the key variables needed to replicate all analyses in the paper. We made every effort to limit the number of variables in the synthetic data to the minimum used in the analysis, both for simplicity and to reduce risk of inadvertent disclosure of PHI, so variables not used in any analyses (e.g., hospitalizations, visit details, etc.) were not included.
+Beginning with our final analytic files for the study, we used the [synthpop](https://cran.r-project.org/web/packages/synthpop/index.html) R package to create a synthetic version of the key variables needed to replicate all analyses in the paper. 
 
-Briefly, we generate a dataset with the same number of observations (patient-years) as our original dataset. The package uses classification and regression trees to sequentially generate variables that captures the moments and covariances of the original dataset. More details can be found at https://cran.r-project.org/web/packages/synthpop/synthpop.pdf.
+The synthetic dataset contains the same number of observations (patient-years) as our original dataset. The package uses classification and regression trees to sequentially generate variables that captures the moments and covariances of the original dataset. More details can be found at https://cran.r-project.org/web/packages/synthpop/synthpop.pdf.
 
-We include a [data dictionary](./data/data_dictionary.md) describing each of the individual variables. One note is that, while the original dataset includes multiple observations (years) from the same patient, the synthetic dataset observations do not take this clustering into account; creating adequate time dependencies for multiple years of synthetic data posed significant challenges, and in fact none of our analyses rely on using multiple observations per patient (though of course we do account for this in calculating standard errors in the original paper).
+We include a [data dictionary](./data/data_dictionary.md) describing each of the individual variables. 
 
 
 ## Preparation
