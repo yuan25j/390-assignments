@@ -5,7 +5,7 @@ We made every effort to limit the number of variables in the synthetic data to t
 The synthetic data file contains 48,784 rows (patient-years) and 160 columns/variables. One note is that, while the original dataset includes multiple observations (years) from the same patient, the synthetic dataset observations do not take this clustering into account; creating adequate time dependencies for multiple years of synthetic data posed significant challenges, and in fact none of our analyses rely on using multiple observations per patient (though of course we do account for this in calculating standard errors in the original paper).
 
 We group the variables into the following categories:
-- [Variables at time t](#variables-at-time-t): A vector of `outcomes' for a given calendar year (t): cost, health, program enrollment, and the commercial risk score. The remaining variables, which are indexed to the year prior to the outcomes (t-1), function primarily as `predictors' in our experimental algorithms. 
+- [Variables at time t](#variables-at-time-t): A vector of "outcomes" for a given calendar year (t): cost, health, program enrollment, and the commercial risk score. The remaining variables, which are indexed to the year prior to the outcomes (t-1), are used primarily as "predictors" in our experimental algorithms. 
 - [Demographic variables](#demographic-variables).
 - [Comorbidity variables at time t-1](#comorbidity-variables-at-time-t-1): A vector of indicators for specific chronic comorbidities (illnesses) that were active in the previous year, and their sum. 
 - [Cost variables at time t-1](#cost-variables-at-time-t-1): Costs claimed from the patients' insurance payer, rounded to the nearest $100 and broken down by type of cost, over the previous year. 
