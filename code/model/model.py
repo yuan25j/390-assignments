@@ -1,0 +1,181 @@
+"""
+Model functions
+"""
+import pandas as pd
+import numpy as np
+import os
+import matplotlib.pyplot as plt
+import util
+
+def split_by_id(df, id_field='ptid', frac_train=.6, frac_val=.15):
+    """Deterministically splits the df by id_field into train/val/test"""
+    ptid = np.sort(df[id_field].unique())
+    print("Splitting {:,} unique {}".format(len(ptid), id_field))
+    # deterministic split
+    rs = np.random.RandomState(0)
+    perm_idx = rs.permutation(len(ptid))
+    num_train = int(frac_train*len(ptid))
+    num_val   = int(frac_val*len(ptid))
+    train_idx = perm_idx[:num_train]
+    val_idx   = perm_idx[num_train:(num_train+num_val)]
+    test_idx  = perm_idx[(num_train+num_val):]
+    ptid_train = ptid[train_idx]
+    ptid_val   = ptid[val_idx]
+    ptid_test  = ptid[test_idx]
+    print(" ... patient splits: {:,} train, {:,} val, {:,} test ".format(
+      len(ptid_train), len(ptid_val), len(ptid_test)))
+    # make dictionaries
+    train_dict = {p: "train" for p in ptid_train}
+    val_dict   = {p: "val"   for p in ptid_val}
+    test_dict  = {p: "test"  for p in ptid_test}
+    split_dict = {**train_dict, **val_dict, **test_dict}
+    # add train/val/test split to each
+    split = []
+    for e in df[id_field]:
+        split.append(split_dict[e])
+    df['split'] = split
+    return df
+
+
+def train_lasso(train_df, holdout_df,
+                x_column_names,
+                y_col,
+                outcomes,
+                n_folds=10,
+                include_race=False,
+                plot=True,
+                output_dir=None):
+    if not include_race:
+        # remove the race variable
+        x_cols = [x for x in x_column_names if x != 'race']
+    else:
+        # include the race variable
+        if 'race' not in x_column_names:
+            x_cols = x_column_names + ['race']
+        else:
+            x_cols = x_column_names
+
+    # split X and y
+    train_X = train_df[x_cols]
+    train_y = train_df[y_col]
+
+    # define CV generator
+    # separate at the patient level
+    from sklearn.model_selection import GroupKFold
+    group_kfold = GroupKFold(n_splits=n_folds)
+    # for the synthetic data, we split at the observation level ('index')
+    group_kfold_generator = group_kfold.split(train_X, train_y,
+                                              groups=train_df['index'])
+    # train lasso cv model
+    from sklearn.linear_model import LassoCV
+    n_alphas = 100
+    lasso_cv = LassoCV(
+                       n_alphas=n_alphas,
+                       cv=group_kfold_generator,
+                       random_state=0,
+                       max_iter=10000,
+                       fit_intercept=True,
+                       normalize=True)
+    lasso_cv.fit(train_X, train_y)
+    alpha = lasso_cv.alpha_
+    train_r2 = lasso_cv.score(train_X, train_y)
+    train_nobs = len(train_X)
+
+    # plot
+    if plot:
+        plt.figure()
+        alphas = lasso_cv.alphas_
+
+        for i in range(n_folds):
+            plt.plot(alphas, lasso_cv.mse_path_[:, i], ':', label='fold {}'.format(i))
+        plt.plot(alphas, lasso_cv.mse_path_.mean(axis=-1), 'k',
+                 label='Average across the folds', linewidth=2)
+        plt.axvline(lasso_cv.alpha_, linestyle='--', color='k',
+                    label='alpha: CV estimate')
+
+        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+        plt.xlabel(r'$\alpha$')
+        plt.ylabel('MSE')
+        plt.title('Mean square error (MSE) on each fold predicting {}'.format(y_col))
+        plt.xscale('log')
+
+        if include_race:
+            filename = 'model_lasso_{}_race.png'.format(y_col)
+        else:
+            filename = 'model_lasso_{}.png'.format(y_col)
+        output_dir = util.create_dir(output_dir)
+        output_filepath = os.path.join(output_dir, filename)
+        plt.savefig(output_filepath, bbox_inches='tight', dpi=500)
+
+    # lasso coefficients
+    coef_col_name = '{}_race_coef'.format(y_col) if include_race else '{}_coef'.format(y_col)
+    lasso_coef_df = pd.DataFrame({'{}_coef'.format(y_col): lasso_cv.coef_}, index=train_X.columns)
+
+    # number of lasso features
+    original_features = len(x_cols)
+    n_features = len(lasso_coef_df)
+
+    def predictions_df(x_vals, y_col, split):
+        y_hat = lasso_cv.predict(x_vals)
+        y_hat_col = '{}_hat'.format(y_col)
+        y_hat_df = pd.DataFrame(y_hat, columns=[y_hat_col])
+        y_hat_percentile = util.assign_percentile(y_hat_df, y_hat_col)
+
+        y_hat_percentile_df = pd.DataFrame(y_hat_percentile)
+        y_hat_percentile_df.columns = ['{}_hat_percentile'.format(y_col)]
+
+        pred_df = pd.concat([y_hat_df, y_hat_percentile_df], axis=1)
+        pred_df['split'] = split
+
+        return pred_df
+
+    # predict in train
+    train_df_pred = predictions_df(train_X, y_col, 'train')
+
+    # predict in holdout
+    holdout_x = holdout_df[x_cols]
+    holdout_df_pred = predictions_df(holdout_x, y_col, 'holdout')
+
+    # predictions
+    pred_df = pd.concat([train_df_pred, holdout_df_pred])
+
+    holdout_Y_pred = pd.concat([holdout_df[outcomes], holdout_df_pred], axis=1)
+    formulas = build_formulas(y_col, outcomes)
+    r2_df = get_r2_df(holdout_Y_pred, formulas)
+
+    return r2_df, pred_df, lasso_coef_df
+
+
+def build_formulas(y_col, outcomes):
+    '''Table 2: r2 for each outcome'''
+    if 'risk_score' in y_col:
+        predictors = ['risk_score_t']
+    else:
+        predictors = ['{}_hat'.format(y_col)]
+    all_formulas = []
+    for y in outcomes:
+        for x in predictors:
+            formula = '{} ~ {}'.format(y, x)
+            all_formulas.append(formula)
+    return all_formulas
+
+
+def get_r2_df(df, formulas):
+    import statsmodels.formula.api as smf
+    r2_list = []
+    for formula in formulas:
+        model = smf.ols(formula, data=df)
+        results = model.fit()
+        r2_dict = {'formula (y ~ x)': formula,
+                   'holdout_r2': results.rsquared,
+                   'holdout_obs': results.nobs}
+        r2_list.append(r2_dict)
+    return pd.DataFrame(r2_list)
+
+
+def get_split_predictions(df, split):
+    """get split predictions"""
+    pred_split_df = df[df['split'] == split]
+    pred_split_df = pred_split_df.drop(columns=['split'])
+    return pred_split_df

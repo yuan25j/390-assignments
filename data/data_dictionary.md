@@ -1,0 +1,198 @@
+# Data Dictionary
+
+The synthetic data file contains 48,784 rows (patient-years) and 160 columns/variables. We group the variables into the following categories:
+- [Variables at time t](#variables-at-time-t)
+- [Demographic variables](#demographic-variables)
+- [Comorbidity variables at time t-1](#comorbidity-variables-at-time-t-1)
+- [Cost variables at time t-1](#cost-variables-at-time-t-1)
+- [Biomarker/medication variables at time t-1](#biomarkermedication-variables-at-time-t-1)
+
+## Variables at time t
+| Variable | Data Type | Description | Sample Data |
+| :------- | :-------- | :---------- | :---------- |
+| risk_score_t | Float | Commercial algorithmic risk score prediction for year t using year t-1 features | 1.32 |
+| program_enrolled_t | Integer | Indicator for whether patient-year was enrolled in program | 0 |
+| gagne_sum_t | Integer | Total number of active chronic illnesses | 3 |
+| cost_t | Float | Total medical expenditures, rounded to the nearest 100 | 1000.00 |
+| cost_avoidable_t | Float | Total avoidable (emergency + inpatient) medical expenditures, rounded to nearest 100 | 100.00 |
+| bps_mean_t | Float | Mean systolic blood pressure in year t | 120.0 |
+| ghba1c_mean_t | Float | Mean HbA1C in year t | 5.5 |
+| hct_mean_t | Float | Mean hematocrit in year t | 40.8 |
+| cre_mean_t | Float | Mean creatinine in year t | 0.78 |
+| ldl_mean_t | Float | Mean low-density lipoprotein in year t | 89.0 |
+
+*Total* = **10** variables at time t
+
+## Demographic variables
+| Variable | Data Type | Description | Sample Data |
+| :------- | :-------- | :---------- | :---------- |
+| race | String | Patient race; values include 'white' or 'black' | white |
+| dem_female | Integer | Indicator for female gender | 1 |
+| dem_age_band_18-24 | Integer | Indicator for patient age between 18-24 | 0 |
+| dem_age_band_25-34 | Integer | Indicator for patient age between 25-34 | 0 |
+| dem_age_band_35-44 | Integer | Indicator for patient age between 35-44 | 0 |
+| dem_age_band_45-54 | Integer | Indicator for patient age between 45-54 | 1 |
+| dem_age_band_55-64 | Integer | Indicator for patient age between 55-64 | 0 |
+| dem_age_band_65-74 | Integer | Indicator for patient age between 65-74 | 0 |
+| dem_age_band_75+ | Integer | Indicator for patient age 75+ | 1 |
+
+*Total* = **9** demographic variables (including race)
+
+## Comorbidity variables at time t-1
+| Variable | Data Type | Description | Sample Data |
+| :------- | :-------- | :---------- | :---------- |
+| gagne_sum | Integer | Total number of active illnesses | 2 |
+| alcohol_elixhauser | Integer | Indicator for alcohol abuse | 0 |
+| anemia_elixhauser | Integer | Indicator for deficiency anemia | 0 |
+| arrhythmia_elixhauser | Integer | Indicator for arrhythmia | 0 |
+| arthritis_elixhauser | Integer | Indicator for arthritis | 1 |
+| bloodlossanemia_elixhauser | Integer | Indicator for blood loss anemia | 0 |
+| coagulopathy_elixhauser | Integer | Indicator for coagulopathy | 0 |
+| compdiabetes_elixhauser | Integer | Indicator for diabetes, complicated | 1 |
+| depression_elixhauser | Integer | Indicator for depression | 0 |
+| drugabuse_elixhauser | Integer | Indicator for drug abuse | 0 |
+| electrolytes_elixhauser | Integer | Indicator for electrolyte disorder | 0 |
+| hypertension_elixhauser | Integer | Indicator for hypertension | 0 |
+| hypothyroid_elixhauser | Integer | Indicator for hypothyroid | 0 |
+| liver_elixhauser | Integer | Indicator for liver disease | 0 |
+| neurodegen_elixhauser | Integer | Indicator for neurodegenerative disease | 0 |
+| obesity_elixhauser | Integer | Indicator for obesity | 0 |
+| paralysis_elixhauser | Integer | Indicator for paralysis | 0 |
+| psychosis_elixhauser | Integer | Indicator for psychoses | 0 |
+| pulmcirc_elixhauser | Integer | Indicator for pulmonary circulation disorders | 0 |
+| pvd_elixhauser | Integer | Indicator for peripheral vascular disorders | 0 |
+| renal_elixhauser | Integer | Indicator for renal failure | 0 |
+| uncompdiabetes_elixhauser | Integer | Indicator for diabetes, uncomplicated | 0 |
+| valvulardz_elixhauser | Integer | Indicator for valvular disease | 0 |
+| wtloss_elixhauser | Integer | Indicator for weight loss | 0 |
+| cerebrovasculardz_romano | Integer | Indicator for cerebrovascular disease | 0 |
+| chf_romano | Integer | Indicator for congestive heart failure | 0 |
+| dementia_romano | Integer | Indicator for dementia | 0 |
+| hemiplegia_romano | Integer | Indicator for hemiplegia | 0 |
+| hivaids_romano | Integer | Indicator for HIV/AIDS | 0 |
+| metastatic_romano | Integer | Indicator for metastasis | 0 |
+| myocardialinfarct_romano | Integer | Indicator for myocardial infarction | 0 |
+| pulmonarydz_romano | Integer | Indicator for pulmonary disease | 0 |
+| tumor_romano | Integer | Indicator for tumor | 0 |
+| ulcer_romano | Integer | Indicator for ulcer | 0 |
+
+*Total* = **34** comorbidity variables at time t-1
+
+## Cost variables at time t-1
+| Variable | Data Type | Description | Sample Data |
+| :------- | :-------- | :---------- | :---------- |
+| cost_dialysis | Float | Total costs for dialysis, rounded to nearest 10 | 990.00 |
+| cost_emergency | Float | Total costs for emergency, rounded to nearest 10 | 140.00 |
+| cost_home_health | Float | Total costs for home health, rounded to nearest 10 | 120.00 |
+| cost_ip_medical | Float | Total costs for inpatient medical, rounded to nearest 10 | 150.00 |
+| cost_ip_surgical | Float | Total costs for inpatient surgical, rounded to nearest 10 | 200.00 |
+| cost_laboratory | Float | Total costs for laboratory, rounded to nearest 10 | 90.00 |
+| cost_op_primary_care | Float | Total costs for outpatient primary care, rounded to nearest 10 | 270.00 |
+| cost_op_specialists | Float | Total costs for outpatient specialists, rounded to nearest 10 | 180.00 |
+| cost_op_surgery | Float | Total costs for outpatient surgery, rounded to nearest 10 | 110.00 |
+| cost_other | Float | Total other costs, rounded to nearest 100 | 300.00 |
+| cost_pharmacy | Float | Total costs for pharmacy, rounded to nearest 10 | 10.00 |
+| cost_physical_therapy | Float | Total costs for physical therapy, rounded to nearest 10 | 190.00 |
+| cost_radiology | Float | Total costs for radiology, rounded to nearest 10 | 120.00 |
+
+*Total* = **13** cost variables at time t-1
+
+## Biomarker/medication variables at time t-1
+| Variable | Data Type | Description | Sample Data |
+| :------- | :-------- | :---------- | :---------- |
+| lasix_dose_count | Integer | Number of Lasix doses | 0 |
+| lasix_min_daily_dose | Integer | Minimum daily dose of Lasix | 20 |
+| lasix_mean_daily_dose | Float | Mean daily dose of Lasix | 20 |
+| lasix_max_daily_dose | Integer | Maximum daily dose of Lasix | 20 |
+| cre_tests | Integer | Number of creatinine tests | 1 |
+| crp_tests | Integer | Number of c-reactive protein tests | 0 |
+| esr_tests | Integer | Number of erythrocyte sedimentation rate tests | 1 |
+| ghba1c_tests | Integer | Number of GHbA1c tests | 1 |
+| hct_tests | Integer | Number of hematocrit tests | 1 |
+| ldl_tests | Integer | Number of LDL tests | 1 |
+| nt_bnp_tests | Integer | Number of BNP tests | 1 |
+| sodium_tests | Integer | Number of sodium tests | 1 |
+| trig_tests | Integer | Number of triglycerides tests | 1 |
+| cre_min-low | Integer | Indicator for low (< 0.84) minimum creatinine test result | 0 |
+| cre_min-high | Integer | Indicator for high (> 1.21) minimum creatinine test result | 0 |
+| cre_min-normal | Integer | Indicator for normal minimum creatinine test result | 1 |
+| cre_mean-low | Integer | Indicator for low (< 0.84) mean creatinine test result | 0 |
+| cre_mean-high | Integer | Indicator for high (> 1.21) mean creatinine test result | 0 |
+| cre_mean-normal | Integer | Indicator for normal mean creatinine test result | 1 |
+| cre_max-low | Integer | Indicator for low (< 0.84) maximum creatinine test result | 0 |
+| cre_max-high | Integer | Indicator for high (> 1.21) maximum creatinine test result | 0 |
+| cre_max-normal | Integer | Indicator for normal maximum creatinine test result | 1 |
+| crp_min-low | Integer | Indicator for low (< 1) minimum c-reactive protein test result | 0 |
+| crp_min-high | Integer | Indicator for high (> 3) minimum c-reactive protein test result | 0 |
+| crp_min-normal | Integer | Indicator for normal minimum c-reactive protein test result | 1 |
+| crp_mean-low | Integer | Indicator for low (< 1) mean c-reactive protein test result | 0 |
+| crp_mean-high | Integer | Indicator for high (> 3) mean c-reactive protein test result | 0 |
+| crp_mean-normal | Integer | Indicator for normal mean c-reactive protein test result | 1 |
+| crp_max-low | Integer | Indicator for low (< 1) maximum c-reactive protein test result | 0 |
+| crp_max-high | Integer | Indicator for high (> 3) maximum c-reactive protein test result | 0 |
+| crp_max-normal | Integer | Indicator for normal maximum c-reactive protein test result | 1 |
+| esr_min-low | Integer | Indicator for low (< 1) minimum erythrocyte sedimentation rate test result | 0 |
+| esr_min-high | Integer | Indicator for high (> 20) minimum erythrocyte sedimentation rate test result | 0 |
+| esr_min-normal | Integer | Indicator for normal minimum erythrocyte sedimentation rate test result | 1 |
+| esr_mean-low | Integer | Indicator for low (< 1) mean erythrocyte sedimentation rate test result | 0 |
+| esr_mean-high | Integer | Indicator for high (> 20) mean erythrocyte sedimentation rate test result | 0 |
+| esr_mean-normal | Integer | Indicator for normal mean erythrocyte sedimentation rate test result | 1 |
+| esr_max-low | Integer | Indicator for low (< 1) maximum erythrocyte sedimentation rate test result | 0 |
+| esr_max-high | Integer | Indicator for high (> 20) maximum erythrocyte sedimentation rate test result | 0 |
+| esr_max-normal | Integer | Indicator for normal maximum erythrocyte sedimentation rate test result | 1 |
+| ghba1c_min-low | Integer | Indicator for low (< 4) minimum GHbA1c test result | 0 |
+| ghba1c_min-high | Integer | Indicator for high (> 5.7) minimum GHbA1c test result | 0 |
+| ghba1c_min-normal | Integer | Indicator for normal minimum GHbA1c test result | 1 |
+| ghba1c_mean-low | Integer | Indicator for low (< 4) mean GHbA1c test result | 0 |
+| ghba1c_mean-high | Integer | Indicator for high (> 5.7) mean GHbA1c test result | 0 |
+| ghba1c_mean-normal | Integer | Indicator for normal mean GHbA1c test result | 1 |
+| ghba1c_max-low | Integer | Indicator for low (< 4) maximum GHbA1c test result | 0 |
+| ghba1c_max-high | Integer | Indicator for high (> 5.7) maximum GHbA1c test result | 0 |
+| ghba1c_max-normal | Integer | Indicator for normal maximum GHbA1c test result | 1 |
+| hct_min-low | Integer | Indicator for low (< 35.5) minimum hematocrit test result | 0 |
+| hct_min-high | Integer | Indicator for high (> 48.6) minimum hematocrit test result | 0 |
+| hct_min-normal | Integer | Indicator for normal minimum hematocrit test result | 1 |
+| hct_mean-low | Integer | Indicator for low (< 35.5) mean hematocrit test result | 0 |
+| hct_mean-high | Integer | Indicator for high (> 48.6) mean hematocrit test result | 0 |
+| hct_mean-normal | Integer | Indicator for normal mean hematocrit test result | 1 |
+| hct_max-low | Integer | Indicator for low (< 35.5) maximum hematocrit test result | 0 |
+| hct_max-high | Integer | Indicator for high (> 48.6) maximum hematocrit test result | 0 |
+| hct_max-normal | Integer | Indicator for normal maximum hematocrit test result | 1 |
+| ldl_min-low | Integer | Indicator for low (< 50) minimum LDL test result | 0 |
+| ldl_min-high | Integer | Indicator for high (> 99) minimum LDL test result | 0 |
+| ldl_min-normal | Integer | Indicator for normal minimum LDL test result | 1 |
+| ldl-mean-low | Integer | Indicator for low (< 50) mean LDL test result | 0 |
+| ldl-mean-high | Integer | Indicator for high (> 99) mean LDL test result | 0 |
+| ldl-mean-normal | Integer | Indicator for normal mean LDL test result | 1 |
+| ldl-max-low | Integer | Indicator for low (< 50) maximum LDL test result | 0 |
+| ldl-max-high | Integer | Indicator for high (> 99) maximum LDL test result | 0 |
+| ldl-max-normal | Integer | Indicator for normal maximum LDL test result | 1 |
+| nt_bnp_min-low | Integer | Indicator for low (< 100) minimum BNP test result | 0 |
+| nt_bnp_min-high | Integer | Indicator for high (> 450) minimum BNP test result | 0 |
+| nt_bnp_min-normal | Integer | Indicator for normal minimum BNP test result | 1 |
+| nt_bnp_mean-low | Integer | Indicator for low (< 100) mean BNP test result | 0 |
+| nt_bnp_mean-high | Integer | Indicator for high (> 450) mean BNP test result | 0 |
+| nt_bnp_mean-normal | Integer | Indicator for normal minimum BNP test result | 1 |
+| nt_bnp_max-low | Integer | Indicator for low (< 100) maximum BNP test result | 0 |
+| nt_bnp_max-high | Integer | Indicator for high (> 450) maximum BNP test result | 0 |
+| nt_bnp_max-normal | Integer | Indicator for normal minimum BNP test result | 1 |
+| sodium_min-low | Integer | Indicator for low (< 135) minimum sodium test result | 0 |
+| sodium_min-high | Integer | Indicator for high (> 145) minimum sodium test result | 0 |
+| sodium_min-normal | Integer | Indicator for normal minimum sodium test result | 1 |
+| sodium_mean-low | Integer | Indicator for low (< 135) mean sodium test result | 0 |
+| sodium_mean-high | Integer | Indicator for high (> 145) mean sodium test result | 0 |
+| sodium_mean-normal | Integer | Indicator for normal mean sodium test result | 1 |
+| sodium_max-low | Integer | Indicator for low (< 135) maximum sodium test result | 0 |
+| sodium_max-high | Integer | Indicator for high (> 145) maximum sodium test result | 0 |
+| sodium_max-normal | Integer | Indicator for normal maximum sodium test result | 1 |
+| trig_min-low | Integer | Indicator for low (< 50) minimum triglycerides test result | 0 |
+| trig_min-high | Integer | Indicator for high (> 150) minimum triglycerides test result | 0 |
+| trig_min-normal | Integer | Indicator for normal minimum triglycerides test result | 1 |
+| trig_mean-low | Integer | Indicator for low (< 50) mean triglycerides test result | 0 |
+| trig_mean-high | Integer | Indicator for high (> 150) mean triglycerides test result | 0 |
+| trig_mean-normal | Integer | Indicator for normal mean triglycerides test result | 1 |
+| trig_max-low | Integer | Indicator for low (< 50) maximum triglycerides test result | 0 |
+| trig_max-high | Integer | Indicator for high (> 150) maximum triglycerides test result | 0 |
+| trig_max-normal | Integer | Indicator for normal maximum triglycerides test result | 1 |
+
+*Total* = **94** biomarker/medication variables at time t-1
