@@ -16,5 +16,4 @@
 .LSOverride
 
 # data
-*.feather
-*.csv
+data.csv
