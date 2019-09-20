@@ -1,16 +1,20 @@
 # Data Dictionary
 
-The synthetic data file contains 48,784 rows (patient-years) and 160 columns/variables. We group the variables into the following categories:
-- [Variables at time t](#variables-at-time-t)
-- [Demographic variables](#demographic-variables)
-- [Comorbidity variables at time t-1](#comorbidity-variables-at-time-t-1)
-- [Cost variables at time t-1](#cost-variables-at-time-t-1)
-- [Biomarker/medication variables at time t-1](#biomarkermedication-variables-at-time-t-1)
+We made every effort to limit the number of variables in the synthetic data to the minimum used in the analysis, both for simplicity and to reduce risk of inadvertent disclosure of PHI, so variables not used in any analyses (e.g., hospitalizations, visit details, etc.) were not included.
+
+The synthetic data file contains 48,784 rows (patient-years) and 160 columns/variables. One note is that, while the original dataset includes multiple observations (years) from the same patient, the synthetic dataset observations do not take this clustering into account; creating adequate time dependencies for multiple years of synthetic data posed significant challenges, and in fact none of our analyses rely on using multiple observations per patient (though of course we do account for this in calculating standard errors in the original paper).
+
+We group the variables into the following categories:
+- [Variables at time t](#variables-at-time-t): A vector of `outcomes' for a given calendar year (t): cost, health, program enrollment, and the commercial risk score. The remaining variables, which are indexed to the year prior to the outcomes (t-1), function primarily as `predictors' in our experimental algorithms. 
+- [Demographic variables](#demographic-variables).
+- [Comorbidity variables at time t-1](#comorbidity-variables-at-time-t-1): A vector of indicators for specific chronic comorbidities (illnesses) that were active in the previous year, and their sum. 
+- [Cost variables at time t-1](#cost-variables-at-time-t-1): Costs claimed from the patients' insurance payer, rounded to the nearest $100 and broken down by type of cost, over the previous year. 
+- [Biomarker/medication variables at time t-1](#biomarkermedication-variables-at-time-t-1): A set of indicators capturing normal or abnormal values (or missingness) of biomarkers or relevant medications, over the previous year. 
 
 ## Variables at time t
 | Variable | Data Type | Description | Sample Data |
 | :------- | :-------- | :---------- | :---------- |
-| risk_score_t | Float | Commercial algorithmic risk score prediction for year t using year t-1 features | 1.32 |
+| risk_score_t | Float | Commercial algorithmic risk score prediction for cost in year t, formed using data from year t-1 | 1.32 |
 | program_enrolled_t | Integer | Indicator for whether patient-year was enrolled in program | 0 |
 | gagne_sum_t | Integer | Total number of active chronic illnesses | 3 |
 | cost_t | Float | Total medical expenditures, rounded to the nearest 100 | 1000.00 |
