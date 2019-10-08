@@ -1,9 +1,9 @@
 ################################################################################
 # prep
 ################################################################################
-rm(list=ls())
+rm(list=ls()) 
 # load packages
-library(plot0)
+library(plot0) 
 # set output path
 res_dir <- paste0(getwd(), '/results/')
 
@@ -19,20 +19,20 @@ default_in_percentile <- 97
 additional_screen_percentile <- 55
 
 # plotting parameters
-color_scheme <- c("#000000","#999999")
-linetype_scheme <- c('twodash', 'solid')
+color_scheme <- c("#000000","#999999") 
+linetype_scheme <- c('twodash', 'solid') 
 subtitlename <- ''
 groupbycolorname <- 'Race'
 xname <- 'Percentile of Algorithm Risk Score'
 
 ################################################################################
-# bps
+# bps 
 ################################################################################
 # compute ----------------------------------------------------------------------
 dt_raw[, bps_above_139_ind := ifelse(bps_mean_t > 139, 1, 0)]
 dt_raw$bps_above_139_ind[is.na(dt_raw$bps_above_139_ind)] <- 0
 
-dt_bps <- MyComputePlotDF(dt_raw,
+dt_bps <- MyComputePlotDF(dt_raw, 
                 col.to.y = 'bps_above_139_ind',
                 col.to.cut = 'risk_score_t',
                 col.to.groupby = 'race',
@@ -50,9 +50,9 @@ avlocation_threshold <- 0.13
 # plot -------------------------------------------------------------------------
 ga <- ggplot(data = dt_bps, aes(color = race, linetype = race,
                            group = race)) +
-  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5)) + 
   theme_bw() +
-  labs(title = titlename,
+  labs(title = titlename, 
        subtitle = subtitlename,
        color = groupbycolorname,
        x = xname,
@@ -63,19 +63,19 @@ ga <- ggplot(data = dt_bps, aes(color = race, linetype = race,
    geom_point(aes(x = percentile, y = col_to_mean_by_percentile_by_race), alpha = 0.4, shape = 4) +
    geom_point(aes(x = quantile, y = col_to_mean_by_quantile_by_race), size = 2) +
    geom_smooth(aes(x = percentile, y = col_to_mean_by_percentile_by_race), se = TRUE, span = 0.99) +
-   geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race,
+   geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race, 
                        ymin = col_to_mean_by_quantile_by_race - 1.96 * ci_se,
-                       ymax = col_to_mean_by_quantile_by_race + 1.96 * ci_se)) +
+                       ymax = col_to_mean_by_quantile_by_race + 1.96 * ci_se)) + 
    geom_vline(aes(xintercept=default_in_percentile), colour="black", linetype="dashed") +
    geom_text(aes(x=default_in_percentile, label="Defaulted into program", y = avlocation_threshold), colour="black", hjust = 1.2, size = 2) +
    geom_vline(aes(xintercept=additional_screen_percentile), colour="dark gray", linetype="dashed") +
-   geom_text(aes(x=additional_screen_percentile, label="Referred for screen", y = avlocation_threshold), colour="dark gray", hjust = 1.2, size = 2)
+   geom_text(aes(x=additional_screen_percentile, label="Referred for screen", y = avlocation_threshold), colour="dark gray", hjust = 1.2, size = 2) 
 
 ################################################################################
 # Hba1c
 ################################################################################
 # compute ----------------------------------------------------------------------
-dt_hba1c <- MyComputePlotDF(dt_raw,
+dt_hba1c <- MyComputePlotDF(dt_raw, 
                 col.to.y = 'ghba1c_mean_t',
                 col.to.cut = 'risk_score_t',
                 col.to.groupby = 'race',
@@ -93,9 +93,9 @@ bvlocation_threshold <- 7.2
 # plot -------------------------------------------------------------------------
 gb <- ggplot(data = dt_hba1c, aes(color = race, linetype = race,
                            group = race)) +
-  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5)) + 
   theme_bw() +
-  labs(title = titlename,
+  labs(title = titlename, 
        subtitle = subtitlename,
        color = groupbycolorname,
        x = xname,
@@ -106,19 +106,19 @@ gb <- ggplot(data = dt_hba1c, aes(color = race, linetype = race,
    geom_point(aes(x = percentile, y = col_to_mean_by_percentile_by_race), alpha = 0.4, shape = 4) +
    geom_point(aes(x = quantile, y = col_to_mean_by_quantile_by_race), size = 2) +
    geom_smooth(aes(x = percentile, y = col_to_mean_by_percentile_by_race), se = TRUE, span = 0.99) +
-   geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race,
+   geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race, 
                        ymin = col_to_mean_by_quantile_by_race - 1.96 * ci_se,
-                       ymax = col_to_mean_by_quantile_by_race + 1.96 * ci_se)) +
+                       ymax = col_to_mean_by_quantile_by_race + 1.96 * ci_se)) + 
    geom_vline(aes(xintercept=default_in_percentile), colour="black", linetype="dashed") +
    geom_text(aes(x=default_in_percentile, label="Defaulted into program", y = bvlocation_threshold), colour="black", hjust = 1.2, size = 2) +
    geom_vline(aes(xintercept=additional_screen_percentile), colour="dark gray", linetype="dashed") +
-   geom_text(aes(x=additional_screen_percentile, label="Referred for screen", y = bvlocation_threshold), colour="dark gray", hjust = 1.2, size = 2)
+   geom_text(aes(x=additional_screen_percentile, label="Referred for screen", y = bvlocation_threshold), colour="dark gray", hjust = 1.2, size = 2) 
 
 ################################################################################
 # Hematocrit
 ################################################################################
 # compute ----------------------------------------------------------------------
-dt_hemo <- MyComputePlotDF(dt_raw,
+dt_hemo <- MyComputePlotDF(dt_raw, 
                 col.to.y = 'hct_mean_t',
                 col.to.cut = 'risk_score_t',
                 col.to.groupby = 'race',
@@ -130,14 +130,14 @@ dt_hemo <- unique(dt_hemo, by = c('race', 'percentile', 'quantile'))
 titlename <- '(e) Anemia severity: hemotocrit'
 dt_hemo[, quantile := quantile - 10]
 yname <- 'Mean Hematocrit (%)'
-cvlocation_threshold <- 45
+cvlocation_threshold <- 45 
 
 # plot ---------------------------------------------------------------------------
 ge <- ggplot(data = dt_hemo, aes(color = race, linetype = race,
                            group = race)) +
-  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5)) + 
   theme_bw() +
-  labs(title = titlename,
+  labs(title = titlename, 
        subtitle = subtitlename,
        color = groupbycolorname,
        x = xname,
@@ -148,13 +148,13 @@ ge <- ggplot(data = dt_hemo, aes(color = race, linetype = race,
    geom_point(aes(x = percentile, y = col_to_mean_by_percentile_by_race), alpha = 0.4, shape = 4) +
    geom_point(aes(x = quantile, y = col_to_mean_by_quantile_by_race), size = 2) +
    geom_smooth(aes(x = percentile, y = col_to_mean_by_percentile_by_race), se = TRUE, span = 0.99) +
-   geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race,
+   geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race, 
                        ymin = col_to_mean_by_quantile_by_race - 1.96 * ci_se,
-                       ymax = col_to_mean_by_quantile_by_race + 1.96 * ci_se)) +
+                       ymax = col_to_mean_by_quantile_by_race + 1.96 * ci_se)) + 
    geom_vline(aes(xintercept=default_in_percentile), colour="black", linetype="dashed") +
    geom_text(aes(x=default_in_percentile, label="Defaulted into program", y = cvlocation_threshold), colour="black", hjust = 1.2, size = 2) +
    geom_vline(aes(xintercept=additional_screen_percentile), colour="dark gray", linetype="dashed") +
-   geom_text(aes(x=additional_screen_percentile, label="Referred for screen", y = cvlocation_threshold), colour="dark gray", hjust = 1.2, size = 2)
+   geom_text(aes(x=additional_screen_percentile, label="Referred for screen", y = cvlocation_threshold), colour="dark gray", hjust = 1.2, size = 2) 
 
 ################################################################################
 # Creatinine
@@ -162,7 +162,7 @@ ge <- ggplot(data = dt_hemo, aes(color = race, linetype = race,
 # compute ----------------------------------------------------------------------
 dt_raw[, cre_mean_mgdL_log10 := log10(cre_mean_t)]
 dt_raw$cre_mean_mgdL_log10[is.na(dt_raw$re_mean_mgdL_log10)] <- 0
-dt_crea <- MyComputePlotDF(dt_raw,
+dt_crea <- MyComputePlotDF(dt_raw, 
                 col.to.y = 'cre_mean_mgdL_log10',
                 col.to.cut = 'risk_score_t',
                 col.to.groupby = 'race',
@@ -179,33 +179,33 @@ dvlocation_threshold <- 0.15
 # plot ------------------------------------------------------------------------
 gd <- ggplot(data = dt_crea, aes(color = race, linetype = race,
                            group = race)) +
-  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5)) + 
   theme_bw() +
-  labs(title = titlename,
+  labs(title = titlename, 
        subtitle = subtitlename,
        color = groupbycolorname,
        x = xname,
        y = yname) +
    scale_x_continuous(breaks = seq(0, 100, 10)) +
-   coord_cartesian(ylim = c(-0.1, 0.2)) +
+   coord_cartesian(ylim = c(-0.1, 0.2)) + 
    scale_color_manual(values = color_scheme, name = groupbycolorname) +
    scale_linetype_manual(values = linetype_scheme, name = groupbycolorname) +
    geom_point(aes(x = percentile, y = col_to_mean_by_percentile_by_race), alpha = 0.4, shape = 4) +
    geom_point(aes(x = quantile, y = col_to_mean_by_quantile_by_race), size = 2) +
    geom_smooth(aes(x = percentile, y = col_to_mean_by_percentile_by_race), se = TRUE, span = 0.99) +
-   geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race,
+   geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race, 
                        ymin = col_to_mean_by_quantile_by_race - 1.96 * ci_se,
-                       ymax = col_to_mean_by_quantile_by_race + 1.96 * ci_se)) +
+                       ymax = col_to_mean_by_quantile_by_race + 1.96 * ci_se)) + 
    geom_vline(aes(xintercept=default_in_percentile), colour="black", linetype="dashed") +
    geom_text(aes(x=default_in_percentile, label="Defaulted into program", y = dvlocation_threshold), colour="black", hjust = 1.2, size = 2) +
    geom_vline(aes(xintercept=additional_screen_percentile), colour="dark gray", linetype="dashed") +
-   geom_text(aes(x=additional_screen_percentile, label="Referred for screen", y = dvlocation_threshold), colour="dark gray", hjust = 1.2, size = 2)
+   geom_text(aes(x=additional_screen_percentile, label="Referred for screen", y = dvlocation_threshold), colour="dark gray", hjust = 1.2, size = 2) 
 
 ################################################################################
 # LDL
 ################################################################################
 # compute ----------------------------------------------------------------------
-dt_ldl <- MyComputePlotDF(dt_raw,
+dt_ldl <- MyComputePlotDF(dt_raw, 
                 col.to.y = 'ldl_mean_t',
                 col.to.cut = 'risk_score_t',
                 col.to.groupby = 'race',
@@ -232,9 +232,9 @@ evlocation_threshold <- 115
 # plot -------------------------------------------------------------------------
 gc <- ggplot(data = dt_ldl, aes(color = race, linetype = race,
                            group = race)) +
-  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5)) + 
   theme_bw() +
-  labs(title = titlename,
+  labs(title = titlename, 
        subtitle = subtitlename,
        color = groupbycolorname,
        x = xname,
@@ -245,16 +245,16 @@ gc <- ggplot(data = dt_ldl, aes(color = race, linetype = race,
    geom_point(aes(x = ventile, y = col_to_mean_by_ventile_by_race), alpha = 0.4, shape = 4) +
    geom_point(aes(x = quantile, y = col_to_mean_by_quantile_by_race), size = 2) +
    geom_smooth(aes(x = ventile, y = col_to_mean_by_ventile_by_race), se = TRUE, span = 0.99) +
-   geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race,
+   geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race, 
                        ymin = col_to_mean_by_quantile_by_race - 1.96 * ci_se,
-                       ymax = col_to_mean_by_quantile_by_race + 1.96 * ci_se)) +
+                       ymax = col_to_mean_by_quantile_by_race + 1.96 * ci_se)) + 
    geom_vline(aes(xintercept=default_in_percentile), colour="black", linetype="dashed") +
    geom_text(aes(x=default_in_percentile, label="Defaulted into program", y = evlocation_threshold), colour="black", hjust = 1.2, size = 2) +
    geom_vline(aes(xintercept=additional_screen_percentile), colour="dark gray", linetype="dashed") +
-   geom_text(aes(x=additional_screen_percentile, label="Referred for screen", y = evlocation_threshold), colour="dark gray", hjust = 1.2, size = 2)
+   geom_text(aes(x=additional_screen_percentile, label="Referred for screen", y = evlocation_threshold), colour="dark gray", hjust = 1.2, size = 2) 
 
 ################################################################################
-# export
+# export 
 ################################################################################
 # png
 ggsave(paste0(res_dir, 'figure2.png'), grid.arrange(ga, gb, gc, gd, ge, ncol = 2, respect=TRUE), width = 14, height = 28)
@@ -286,3 +286,4 @@ ggsave(paste0(res_dir, 'figure2.eps'), device = 'eps',grid.arrange(ga, gb, gc, g
 #filename <- 'figure2_e_hemo'
 #ggsave(ge, device = 'png', file = paste0(res_dir, filename, ".png"),
 #       width = 10, height = 10, units = "in", dpi = 250)
+

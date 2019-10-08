@@ -95,7 +95,7 @@ def get_best_worst_difference(df):
 def build_table2():
     # define output dir
     git_dir = util.get_git_dir()
-    OUTPUT_DIR = util.create_dir(os.path.join(git_dir, 'public_release','results'))
+    OUTPUT_DIR = util.create_dir(os.path.join(git_dir, 'results'))
 
     # load holdout predictions
     holdout_pred_fp = os.path.join(OUTPUT_DIR, 'model_lasso_predictors.csv')

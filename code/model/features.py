@@ -1,5 +1,5 @@
 """
-Functions for subsetting features.
+Functions for creating features.
 """
 
 def get_dem_features(df):
@@ -12,13 +12,12 @@ def get_dem_features(df):
                 dem_features.append(col)
     return dem_features
 
-
 def get_comorbidity_features(df):
     """get comorbidity features"""
     comorbidity_features = []
     comorbidity_sum = 'gagne_sum'
-    suffix_elixhauser = '_elixhauser'
-    suffix_romano = '_romano'
+    suffix_elixhauser = '_elixhauser_tm1'
+    suffix_romano = '_romano_tm1'
 
     for col in df.columns:
         if col == comorbidity_sum:
@@ -31,7 +30,6 @@ def get_comorbidity_features(df):
             continue
     return comorbidity_features
 
-
 def get_cost_features(df):
     """get cost features"""
     cost_features = []
@@ -43,14 +41,13 @@ def get_cost_features(df):
                 cost_features.append(col)
     return cost_features
 
-
 def get_lab_features(df):
     """get lab features"""
     lab_features = []
-    suffix_labs_counts = '_tests'
-    suffix_labs_low = '-low'
-    suffix_labs_high = '-high'
-    suffix_labs_normal = '-normal'
+    suffix_labs_counts = '_tests_tm1'
+    suffix_labs_low = '-low_tm1'
+    suffix_labs_high = '-high_tm1'
+    suffix_labs_normal = '-normal_tm1'
     for col in df.columns:
         # get lab features
         if suffix_labs_counts == col[-len(suffix_labs_counts):]:
