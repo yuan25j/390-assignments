@@ -119,6 +119,7 @@ def build_table1():
     white_table1 = get_table1(white_df, 'White', total_n)
     black_table1 = get_table1(black_df, 'Black', total_n)
 
+    # merge white table 1 and black table 1
     table1 = white_table1.merge(black_table1)
 
     # save output to CSV
