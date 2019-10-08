@@ -83,7 +83,6 @@ report_stats <- function(){
     # group 2: Predicted health, in predicted cost bin
     print("Group 2") 
     df_samp <- NULL
-    set.seed(12345)
     for(i in 1:100){
         df_bin <- pred_df[risk_score_t_percentile==i]
         enrollment_rate <- df_enrollment_rate[percentile == i, enrollment_rate]
