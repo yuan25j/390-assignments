@@ -7,29 +7,30 @@ import os
 import matplotlib.pyplot as plt
 import util
 
-def split_by_id(df, id_field='ptid', frac_train=.6, frac_val=.15):
-    """Deterministically splits the df by id_field into train/val/test"""
+def split_by_id(df, id_field='ptid', frac_train=.6):
+    """Split the df by id_field into train/holdout deterministically"""
     ptid = np.sort(df[id_field].unique())
     print("Splitting {:,} unique {}".format(len(ptid), id_field))
+
     # deterministic split
     rs = np.random.RandomState(0)
     perm_idx = rs.permutation(len(ptid))
     num_train = int(frac_train*len(ptid))
-    num_val   = int(frac_val*len(ptid))
+
+    # obtain train/holdout
     train_idx = perm_idx[:num_train]
-    val_idx   = perm_idx[num_train:(num_train+num_val)]
-    test_idx  = perm_idx[(num_train+num_val):]
+    holdout_idx  = perm_idx[num_train:]
     ptid_train = ptid[train_idx]
-    ptid_val   = ptid[val_idx]
-    ptid_test  = ptid[test_idx]
-    print(" ... patient splits: {:,} train, {:,} val, {:,} test ".format(
-      len(ptid_train), len(ptid_val), len(ptid_test)))
+    ptid_holdout  = ptid[holdout_idx]
+    print(" ...splitting by patient: {:,} train, {:,} holdout ".format(
+      len(ptid_train), len(holdout_idx)))
+
     # make dictionaries
     train_dict = {p: "train" for p in ptid_train}
-    val_dict   = {p: "val"   for p in ptid_val}
-    test_dict  = {p: "test"  for p in ptid_test}
-    split_dict = {**train_dict, **val_dict, **test_dict}
-    # add train/val/test split to each
+    holdout_dict  = {p: "holdout"  for p in ptid_holdout}
+    split_dict = {**train_dict, **holdout_dict}
+    # add train/holdout split to each
+
     split = []
     for e in df[id_field]:
         split.append(split_dict[e])

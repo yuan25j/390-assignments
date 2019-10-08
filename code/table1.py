@@ -7,13 +7,15 @@ import model.util as util
 
 
 def get_table1(df, race, total_n):
+    print('...building table1 for {}'.format(race))
     df = df.copy()
     table1_list = []  # list of tuples
 
-    n = len(df)*1.0
+    n = len(df) * 1.0
     table1_list.append(('n (patient-years)', '{:,}'.format(n)))
 
     # Demographics
+    print('....adding demographics')
     table1_list.append(('Demographics', '---'))
     table1_list.append(('Age 18-24', '{:.2f}'.format(df['dem_age_band_18-24_tm1'].sum() / n)))
     table1_list.append(('Age 25-34', '{:.2f}'.format(df['dem_age_band_25-34_tm1'].sum() / n)))
@@ -25,16 +27,19 @@ def get_table1(df, race, total_n):
     table1_list.append(('Female', '{:.2f}'.format(df['dem_female'].sum() / n)))
 
     # Care management program
+    print('....adding care management program')
     table1_list.append(('Care management program', '---'))
     df['risk_score_t_percentile'] = util.assign_percentile(df, 'risk_score_t').astype(int)
     table1_list.append(('Algorithm score (percentile)', '{:.0f}'.format(df['risk_score_t_percentile'].mean())))
     table1_list.append(('Race composition of program (%)', '{:.1f}'.format(n / total_n * 100)))
 
     # Care utilization - CHECK WITH ZOEY
+    print('....adding care utilization')
     table1_list.append(('Care utilization', '---'))
     table1_list.append(('Actual cost', '${:,.0f}'.format(df['cost_t'].mean())))
 
     # Mean biomarker values
+    print('....adding mean biomarkers')
     table1_list.append(('Mean biomarkers', '---'))
     table1_list.append(('HbA1c', '{:.1f}'.format(df['ghba1c_mean_t'].mean())))
     table1_list.append(('Systolic BP', '{:.1f}'.format(df['bps_mean_t'].mean())))  # CHECK WITH ZOEY
@@ -43,8 +48,8 @@ def get_table1(df, race, total_n):
     table1_list.append(('Hematocrit', '{:.1f}'.format(df['hct_mean_t'].mean())))
     table1_list.append(('LDL', '{:.1f}'.format(df['ldl_mean_t'].mean())))
 
-
     # Active chronic illnesses (comorbidities)
+    print('....adding active chronic illnesses (comorbidities)')
     table1_list.append(('Active chronic illnesses (comorbidities)', '---'))
     table1_list.append(('Total number of active illnesses', '{:.2f}'.format(df['gagne_sum_t'].mean())))
     table1_list.append(('Hypertension',
