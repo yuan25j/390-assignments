@@ -43,8 +43,6 @@ def get_Y_x_df(df, verbose):
     table_metrics = ['dem_race_black', 'risk_score_t', 'program_enrolled_t',
                      'cost_t', 'cost_avoidable_t']
 
-
-
     # combine all features together -- this forms the Y_x df
     all_Y_x_df = df[cohort_cols + x_column_names + Y_predictors + table_metrics].copy()
 
@@ -60,12 +58,12 @@ def main():
 
     # assign to 2/3 train, 1/3 holdout
     all_Y_x_df = model.split_by_id(all_Y_x_df, id_field='index',
-                             frac_train=.67, frac_val=0)
+                                   frac_train=.67)
 
     # define train, holdout
     # reset_index for pd.concat() along column
     train_df = all_Y_x_df[all_Y_x_df['split'] == 'train'].reset_index(drop=True)
-    holdout_df = all_Y_x_df[all_Y_x_df['split'] == 'test'].reset_index(drop=True)
+    holdout_df = all_Y_x_df[all_Y_x_df['split'] == 'holdout'].reset_index(drop=True)
 
     # define output dir to save results
     git_dir = util.get_git_dir()

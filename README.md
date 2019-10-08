@@ -1,10 +1,12 @@
-# Public Release Data and Code
+# Public Release Synthetic Data and Code
 
 ## Project Repository Structure
-1. *data*: we provide a synthetic master dataset that includes all the information needed
-   to closely replicate our original results.
-2. *code*: we release our code in R and Python to replicate our paper results.
-3. *results*: we provide our replication of the results from our synthetic dataset.
+
+This repository contains data and code needed to reproduce the main results for our [paper]() Dissecting Racial Bias in an Algorithm Used to Manage the Health of Populations. 
+
+1. *data*: A synthetic master dataset that closely mirrors the dataset used to produce our original results (which cannot be shared to protect patient privacy).
+2. *code*: Code in R and Python that can be used to replicate the figures and tables from the main manuscript.
+3. *results*: Our own replication of these results using the synthetic dataset.
 
 ## Synthetic Dataset Creation
 
