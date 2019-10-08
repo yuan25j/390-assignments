@@ -1,5 +1,5 @@
 """
-Build table1.
+Build Table 1 summary statistics.
 """
 import pandas as pd
 import os
@@ -7,6 +7,22 @@ import model.util as util
 
 
 def get_table1(df, race, total_n):
+    """Build Table 1.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Subset of data dataframe by race
+    race : str
+        Patient race as column name for Table 1.
+    total_n : int
+        Total number of observations in entire dataframe.
+
+    Returns
+    -------
+    pd.DataFrame
+        Table 1 for df.
+    """
     print('...building table1 for {}'.format(race))
     df = df.copy()
     table1_list = []  # list of tuples
@@ -17,7 +33,7 @@ def get_table1(df, race, total_n):
     # Demographics
     print('....adding demographics')
     table1_list.append(('Demographics', '---'))
-    table1_list.append(('Age 18-24', '{:.2f}'.format(df['dem_age_band_18-24_tm1'].sum() / n)))
+    table1_list.append(('Age 18-24','{:.2f}'.format(df['dem_age_band_18-24_tm1'].sum() / n)))
     table1_list.append(('Age 25-34', '{:.2f}'.format(df['dem_age_band_25-34_tm1'].sum() / n)))
     table1_list.append(('Age 35-44', '{:.2f}'.format(df['dem_age_band_35-44_tm1'].sum() / n)))
     table1_list.append(('Age 45-54', '{:.2f}'.format(df['dem_age_band_45-54_tm1'].sum() / n)))
@@ -79,18 +95,23 @@ def get_table1(df, race, total_n):
 
     return table1_df
 
+
 def build_table1():
+    """Build Table 1 and save as CSV."""
     # define output dir
     git_dir = util.get_git_dir()
     OUTPUT_DIR = util.create_dir(os.path.join(git_dir, 'results'))
 
     # define filepath
-    data_fp = '/data/zolab/racial_bias_final/racial_bias/public_release/data/data_new.csv'
+    # data_fp = '/data/zolab/racial_bias_final/racial_bias/public_release/data/data_new.csv'
+    git_dir = util.get_git_dir()
+    data_fp = os.path.join(git_dir, 'data', 'data_new.csv')
 
     # load df
     data_df = pd.read_csv(data_fp)
 
-    total_n = len(data_df)*1.0
+    # calculate total N for entire df
+    total_n = len(data_df) * 1.0
 
     # split by white, black patients
     white_df = data_df[data_df['race'] == 'white']
@@ -99,13 +120,14 @@ def build_table1():
     white_table1 = get_table1(white_df, 'White', total_n)
     black_table1 = get_table1(black_df, 'Black', total_n)
 
-    table1 =  white_table1.merge(black_table1)
+    table1 = white_table1.merge(black_table1)
 
-    # SAVE OUTPUT TO CSV
+    # save output to CSV
     filename = 'table1.csv'
     output_filepath = os.path.join(OUTPUT_DIR, filename)
     print('...writing to {}'.format(output_filepath))
     table1.to_csv(output_filepath, index=False)
+
 
 if __name__ == '__main__':
     build_table1()
