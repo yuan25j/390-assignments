@@ -1,5 +1,5 @@
 """
-Build Table 1 summary statistics.
+Build Table 1: summary statistics by race.
 """
 import pandas as pd
 import os
@@ -14,7 +14,7 @@ def get_table1(df, race, total_n):
     df : pd.DataFrame
         Subset of data dataframe by race
     race : str
-        Patient race as column name for Table 1.
+        Patient race data subset, used as column name for Table 1.
     total_n : int
         Total number of observations in entire dataframe.
 
@@ -49,7 +49,7 @@ def get_table1(df, race, total_n):
     table1_list.append(('Algorithm score (percentile)', '{:.0f}'.format(df['risk_score_t_percentile'].mean())))
     table1_list.append(('Race composition of program (%)', '{:.1f}'.format(n / total_n * 100)))
 
-    # Care utilization - CHECK WITH ZOEY
+    # Care utilization
     print('....adding care utilization')
     table1_list.append(('Care utilization', '---'))
     table1_list.append(('Actual cost', '${:,.0f}'.format(df['cost_t'].mean())))
@@ -58,7 +58,7 @@ def get_table1(df, race, total_n):
     print('....adding mean biomarkers')
     table1_list.append(('Mean biomarkers', '---'))
     table1_list.append(('HbA1c', '{:.1f}'.format(df['ghba1c_mean_t'].mean())))
-    table1_list.append(('Systolic BP', '{:.1f}'.format(df['bps_mean_t'].mean())))  # CHECK WITH ZOEY
+    table1_list.append(('Systolic BP', '{:.1f}'.format(df['bps_mean_t'].mean())))
     # table1_list.append(('Diastolic BP', df['??'].mean()))  # CHECK WITH ZOEY
     table1_list.append(('Creatinine', '{:.1f}'.format(df['cre_mean_t'].mean())))
     table1_list.append(('Hematocrit', '{:.1f}'.format(df['hct_mean_t'].mean())))
@@ -75,7 +75,7 @@ def get_table1(df, race, total_n):
         '{:.2f}'.format(df['arrhythmia_elixhauser_tm1'].mean())))
     table1_list.append(('Hypothyroid', '{:.2f}'.format(df['hypothyroid_elixhauser_tm1'].mean())))
     table1_list.append(('Obesity', '{:.2f}'.format(df['obesity_elixhauser_tm1'].mean())))
-    table1_list.append(('Pulmonary disease', '{:.2f}'.format(df['pulmonarydz_romano_tm1'].mean())))  # CHECK WITH ZOEY
+    table1_list.append(('Pulmonary disease', '{:.2f}'.format(df['pulmonarydz_romano_tm1'].mean())))
     table1_list.append(('Cancer', '{:.2f}'.format(df['tumor_romano_tm1'].mean())))  # CHECK WITH ZOEY
     table1_list.append(('Depression', '{:.2f}'.format(df['depression_elixhauser_tm1'].mean())))
     table1_list.append(('Anemia', '{:.2f}'.format(df['anemia_elixhauser_tm1'].mean())))
@@ -85,7 +85,7 @@ def get_table1(df, race, total_n):
     table1_list.append(('Heart failure', '{:.2f}'.format(df['chf_romano_tm1'].mean())))
     table1_list.append(('Psychosis', '{:.2f}'.format(df['psychosis_elixhauser_tm1'].mean())))
     table1_list.append(('Valvular disease', '{:.2f}'.format(df['valvulardz_elixhauser_tm1'].mean())))
-    table1_list.append(('Stroke', '{:.2f}'.format(df['hemiplegia_romano_tm1'].mean())))  # CHECK WITH ZOEY
+    table1_list.append(('Stroke', '{:.2f}'.format(df['hemiplegia_romano_tm1'].mean())))
     table1_list.append(('Peripheral vascular disease', '{:.2f}'.format(df['pvd_elixhauser_tm1'].mean())))
     table1_list.append(('Diabetes, complicated', '{:.2f}'.format(df['compdiabetes_elixhauser_tm1'].mean())))
     table1_list.append(('Heart attack', '{:.2f}'.format(df['myocardialinfarct_romano_tm1'].mean())))
@@ -103,7 +103,6 @@ def build_table1():
     OUTPUT_DIR = util.create_dir(os.path.join(git_dir, 'results'))
 
     # define filepath
-    # data_fp = '/data/zolab/racial_bias_final/racial_bias/public_release/data/data_new.csv'
     git_dir = util.get_git_dir()
     data_fp = os.path.join(git_dir, 'data', 'data_new.csv')
 
