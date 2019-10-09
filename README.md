@@ -39,7 +39,8 @@ conda activate bias
     - `Rscript code/figure1/figure1.R`
         - 'figure1.R' imports results from `figure1b.R`, but there's no need to
           run them separately to produce figure1.
-        - If you would like to run `figure1b.R` separately and genearted `figure1b.csv`, run `Rscript code/figure1/figure1b.R`.
+        - If you would like to run `figure1b.R` separately and generated
+        `figure1b.csv`, run `Rscript code/figure1/figure1b.R`.
     - `Rscript code/figure2.R`
     - `Rscript code/figure3.R`
 - To train model and save predictions on the holdout:
