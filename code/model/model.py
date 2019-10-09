@@ -8,7 +8,23 @@ import matplotlib.pyplot as plt
 import util
 
 def split_by_id(df, id_field='ptid', frac_train=.6):
-    """Split the df by id_field into train/holdout deterministically"""
+    """Split the df by id_field into train/holdout deterministically
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Data dataframe.
+    id_field : str
+        Split df by this column (ex: ptid).
+    frac_train : float
+        Fraction assigned to train. 1-train assigned to holdout.
+
+    Returns
+    -------
+    pd.DataFrame
+        Data dataframe with additional column 'split' indication train/holdout
+
+    """
     ptid = np.sort(df[id_field].unique())
     print("Splitting {:,} unique {}".format(len(ptid), id_field))
 
@@ -29,13 +45,93 @@ def split_by_id(df, id_field='ptid', frac_train=.6):
     train_dict = {p: "train" for p in ptid_train}
     holdout_dict  = {p: "holdout"  for p in ptid_holdout}
     split_dict = {**train_dict, **holdout_dict}
-    # add train/holdout split to each
 
+    # add train/holdout split to each
     split = []
     for e in df[id_field]:
         split.append(split_dict[e])
     df['split'] = split
+
     return df
+
+
+def get_split_predictions(df, split):
+    """Get predictions for split (train/holdout).
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Data dataframe.
+    split : str
+        Name of split.
+
+    Returns
+    -------
+    pd.DataFrame
+        Subset of df with value split.
+
+    """
+    pred_split_df = df[df['split'] == split]
+    pred_split_df = pred_split_df.drop(columns=['split'])
+    return pred_split_df
+
+
+def build_formulas(y_col, outcomes):
+    """Build regression formulas for each outcome (y) ~ y_col predictor (x).
+
+    Parameters
+    ----------
+    y_col : str
+        Algorithm training label.
+    outcomes : list
+        All outcomes of interest.
+
+    Returns
+    -------
+    list
+        List of all regression formulas.
+
+    """
+    if 'risk_score' in y_col:
+        predictors = ['risk_score_t']
+    else:
+        predictors = ['{}_hat'.format(y_col)]
+
+    # build all y ~ x formulas
+    all_formulas = []
+    for y in outcomes:
+        for x in predictors:
+            formula = '{} ~ {}'.format(y, x)
+            all_formulas.append(formula)
+    return all_formulas
+
+
+def get_r2_df(df, formulas):
+    """Short summary.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Holdout dataframe.
+    formulas : list
+        List of regression formulas.
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe of formula (y ~ x), holdout_r2, holdout_obs.
+
+    """
+    import statsmodels.formula.api as smf
+    r2_list = []
+    for formula in formulas:
+        model = smf.ols(formula, data=df)
+        results = model.fit()
+        r2_dict = {'formula (y ~ x)': formula,
+                   'holdout_r2': results.rsquared,
+                   'holdout_obs': results.nobs}
+        r2_list.append(r2_dict)
+    return pd.DataFrame(r2_list)
 
 
 def train_lasso(train_df, holdout_df,
@@ -60,7 +156,7 @@ def train_lasso(train_df, holdout_df,
     train_X = train_df[x_cols]
     train_y = train_df[y_col]
 
-    # define CV generator
+    # define cross validation (CV) generator
     # separate at the patient level
     from sklearn.model_selection import GroupKFold
     group_kfold = GroupKFold(n_splits=n_folds)
@@ -121,7 +217,7 @@ def train_lasso(train_df, holdout_df,
         y_hat = lasso_cv.predict(x_vals)
         y_hat_col = '{}_hat'.format(y_col)
         y_hat_df = pd.DataFrame(y_hat, columns=[y_hat_col])
-        y_hat_percentile = util.assign_percentile(y_hat_df, y_hat_col)
+        y_hat_percentile = util.convert_to_percentile(y_hat_df, y_hat_col)
 
         y_hat_percentile_df = pd.DataFrame(y_hat_percentile)
         y_hat_percentile_df.columns = ['{}_hat_percentile'.format(y_col)]
@@ -146,37 +242,3 @@ def train_lasso(train_df, holdout_df,
     r2_df = get_r2_df(holdout_Y_pred, formulas)
 
     return r2_df, pred_df, lasso_coef_df
-
-
-def build_formulas(y_col, outcomes):
-    '''Table 2: r2 for each outcome'''
-    if 'risk_score' in y_col:
-        predictors = ['risk_score_t']
-    else:
-        predictors = ['{}_hat'.format(y_col)]
-    all_formulas = []
-    for y in outcomes:
-        for x in predictors:
-            formula = '{} ~ {}'.format(y, x)
-            all_formulas.append(formula)
-    return all_formulas
-
-
-def get_r2_df(df, formulas):
-    import statsmodels.formula.api as smf
-    r2_list = []
-    for formula in formulas:
-        model = smf.ols(formula, data=df)
-        results = model.fit()
-        r2_dict = {'formula (y ~ x)': formula,
-                   'holdout_r2': results.rsquared,
-                   'holdout_obs': results.nobs}
-        r2_list.append(r2_dict)
-    return pd.DataFrame(r2_list)
-
-
-def get_split_predictions(df, split):
-    """get split predictions"""
-    pred_split_df = df[df['split'] == split]
-    pred_split_df = pred_split_df.drop(columns=['split'])
-    return pred_split_df

@@ -2,8 +2,21 @@
 Functions for creating features.
 """
 
+
 def get_dem_features(df):
-    """get demographic features"""
+    """Get demographic features.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Data dataframe.
+
+    Returns
+    -------
+    list
+        List of demographic features.
+
+    """
     dem_features = []
     prefix = 'dem_'
     for col in df.columns:
@@ -12,10 +25,23 @@ def get_dem_features(df):
                 dem_features.append(col)
     return dem_features
 
+
 def get_comorbidity_features(df):
-    """get comorbidity features"""
+    """Get comorbidity features.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Data dataframe.
+
+    Returns
+    -------
+    list
+        List of comorbidity features.
+
+    """
     comorbidity_features = []
-    comorbidity_sum = 'gagne_sum'
+    comorbidity_sum = 'gagne_sum_tm1'
     suffix_elixhauser = '_elixhauser_tm1'
     suffix_romano = '_romano_tm1'
 
@@ -30,8 +56,21 @@ def get_comorbidity_features(df):
             continue
     return comorbidity_features
 
+
 def get_cost_features(df):
-    """get cost features"""
+    """Get cost features.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Data dataframe.
+
+    Returns
+    -------
+    list
+        List of cost features.
+
+    """
     cost_features = []
     prefix = 'cost_'
     for col in df.columns:
@@ -41,8 +80,21 @@ def get_cost_features(df):
                 cost_features.append(col)
     return cost_features
 
+
 def get_lab_features(df):
-    """get lab features"""
+    """Get lab features.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Data dataframe.
+
+    Returns
+    -------
+    list
+        List of lab features.
+
+    """
     lab_features = []
     suffix_labs_counts = '_tests_tm1'
     suffix_labs_low = '-low_tm1'
@@ -64,7 +116,19 @@ def get_lab_features(df):
 
 
 def get_med_features(df):
-    """get med features"""
+    """Get med features.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Data dataframe.
+
+    Returns
+    -------
+    list
+        List of med features.
+
+    """
     med_features = []
     prefix = 'lasix_'
     for col in df.columns:
@@ -74,6 +138,21 @@ def get_med_features(df):
 
 
 def get_all_features(df, verbose=False):
+    """Get all features.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Data dataframe.
+    verbose : bool
+        Print statistics of features.
+
+    Returns
+    -------
+    list
+        List of all features.
+
+    """
     dem_features = get_dem_features(df)
     comorbidity_features = get_comorbidity_features(df)
     cost_features = get_cost_features(df)

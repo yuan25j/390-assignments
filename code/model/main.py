@@ -4,7 +4,6 @@ Main script to train lasso model and save predictions.
 import pandas as pd
 import numpy as np
 import os
-import matplotlib.pyplot as plt
 
 import features
 import model
@@ -14,7 +13,7 @@ import util
 def load_data_df():
     # define filepath
     git_dir = util.get_git_dir()
-    data_fp = os.path.join(git_dir, 'data' ,'data_new.csv')
+    data_fp = os.path.join(git_dir, 'data', 'data_new.csv')
 
     # load df
     data_df = pd.read_csv(data_fp)
@@ -30,8 +29,8 @@ def get_Y_x_df(df, verbose):
     x_column_names = features.get_all_features(df, verbose)
 
     # add log columns
-    df['log_cost_t'] = util.assign_log(df, 'cost_t')
-    df['log_cost_avoidable_t'] = util.assign_log(df, 'cost_avoidable_t')
+    df['log_cost_t'] = util.convert_to_log(df, 'cost_t')
+    df['log_cost_avoidable_t'] = util.convert_to_log(df, 'cost_avoidable_t')
 
     # labels (Y) to predict
     Y_predictors = ['log_cost_t', 'gagne_sum_t', 'log_cost_avoidable_t']
@@ -159,7 +158,8 @@ def main():
                                               'log_cost_avoidable_t_hat']].copy()
 
     # add risk_score_percentile column
-    holdout_pred_df_subset['risk_score_t_percentile'] = util.assign_percentile(holdout_pred_df_subset, 'risk_score_t')
+    holdout_pred_df_subset['risk_score_t_percentile'] = \
+        util.convert_to_percentile(holdout_pred_df_subset, 'risk_score_t')
 
     # save to CSV
     if include_race:
