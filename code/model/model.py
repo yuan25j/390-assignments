@@ -1,5 +1,5 @@
 """
-Model functions
+Functions for training model.
 """
 import pandas as pd
 import numpy as np
@@ -8,16 +8,16 @@ import matplotlib.pyplot as plt
 import util
 
 def split_by_id(df, id_field='ptid', frac_train=.6):
-    """Split the df by id_field into train/holdout deterministically
+    """Split the df by id_field into train/holdout deterministically.
 
     Parameters
     ----------
     df : pd.DataFrame
         Data dataframe.
     id_field : str
-        Split df by this column (ex: ptid).
+        Split df by this column (e.g. 'ptid').
     frac_train : float
-        Fraction assigned to train. 1-train assigned to holdout.
+        Fraction assigned to train. (1 - frac_train) assigned to holdout.
 
     Returns
     -------
@@ -63,7 +63,7 @@ def get_split_predictions(df, split):
     df : pd.DataFrame
         Data dataframe.
     split : str
-        Name of split.
+        Name of split (e.g. 'holdout')
 
     Returns
     -------
@@ -119,11 +119,13 @@ def get_r2_df(df, formulas):
     Returns
     -------
     pd.DataFrame
-        Dataframe of formula (y ~ x), holdout_r2, holdout_obs.
+        DataFrame of formula (y ~ x), holdout_r2, holdout_obs.
 
     """
     import statsmodels.formula.api as smf
     r2_list = []
+
+    # run all OLS regressions
     for formula in formulas:
         model = smf.ols(formula, data=df)
         results = model.fit()
@@ -142,6 +144,39 @@ def train_lasso(train_df, holdout_df,
                 include_race=False,
                 plot=True,
                 output_dir=None):
+    """Train LASSO model and get predictions for holdout.
+
+    Parameters
+    ----------
+    train_df : pd.DataFrame
+        Train dataframe.
+    holdout_df : pd.DataFrame
+        Holdout dataframe.
+    x_column_names : list
+        List of column names to use as features.
+    y_col : str
+        Name of y column (label) to predict.
+    outcomes : list
+        All labels (Y) to predict.
+    n_folds : int
+        Number of folds for cross validation.
+    include_race : bool
+        Whether to include the race variable as a feature (X).
+    plot : bool
+        Whether to save the mean square error (MSE) plots.
+    output_dir : str
+        Path where to save results.
+
+    Returns
+    -------
+    r2_df : pd.DataFrame
+        DataFrame of formula (y ~ x), holdout_r2, holdout_obs.
+    pred_df : pd.DataFrame
+        DataFrame of all predictions (train and holdout).
+    lasso_coef_df : pd.DataFrame
+        DataFrame of lasso coefficients.
+
+    """
     if not include_race:
         # remove the race variable
         x_cols = [x for x in x_column_names if x != 'race']
@@ -214,11 +249,29 @@ def train_lasso(train_df, holdout_df,
     n_features = len(lasso_coef_df)
 
     def predictions_df(x_vals, y_col, split):
+        """Short summary.
+
+        Parameters
+        ----------
+        x_vals : pd.DataFrame
+            DataFrame of all X values.
+        y_col : str
+            Name of y column (label) to predict.
+        split : str
+            Name of split (e.g. 'holdout').
+
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame with 'y_hat' (prediction), 'y_hat_percentile', 'split'
+
+        """
         y_hat = lasso_cv.predict(x_vals)
         y_hat_col = '{}_hat'.format(y_col)
         y_hat_df = pd.DataFrame(y_hat, columns=[y_hat_col])
         y_hat_percentile = util.convert_to_percentile(y_hat_df, y_hat_col)
 
+        # include column for y_hat percentile
         y_hat_percentile_df = pd.DataFrame(y_hat_percentile)
         y_hat_percentile_df.columns = ['{}_hat_percentile'.format(y_col)]
 
@@ -231,12 +284,13 @@ def train_lasso(train_df, holdout_df,
     train_df_pred = predictions_df(train_X, y_col, 'train')
 
     # predict in holdout
-    holdout_x = holdout_df[x_cols]
-    holdout_df_pred = predictions_df(holdout_x, y_col, 'holdout')
+    holdout_X = holdout_df[x_cols]
+    holdout_df_pred = predictions_df(holdout_X, y_col, 'holdout')
 
     # predictions
     pred_df = pd.concat([train_df_pred, holdout_df_pred])
 
+    # r2
     holdout_Y_pred = pd.concat([holdout_df[outcomes], holdout_df_pred], axis=1)
     formulas = build_formulas(y_col, outcomes)
     r2_df = get_r2_df(holdout_Y_pred, formulas)

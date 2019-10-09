@@ -2,7 +2,7 @@
 
 ## Project Repository Structure
 
-This repository contains data and code needed to reproduce the main results for our [paper]() Dissecting Racial Bias in an Algorithm Used to Manage the Health of Populations. 
+This repository contains data and code needed to reproduce the main results for our [paper]() Dissecting Racial Bias in an Algorithm Used to Manage the Health of Populations.
 
 1. *data*: A synthetic master dataset that closely mirrors the dataset used to produce our original results (which cannot be shared to protect patient privacy).
 2. *code*: Code in R and Python that can be used to replicate the figures and tables from the main manuscript.
@@ -10,23 +10,22 @@ This repository contains data and code needed to reproduce the main results for 
 
 ## Synthetic Dataset Creation
 
-Beginning with our final analytic files for the study, we used the [synthpop](https://cran.r-project.org/web/packages/synthpop/index.html) R package to create a synthetic version of the key variables needed to replicate all analyses in the paper. 
+Beginning with our final analytic files for the study, we used the [synthpop](https://cran.r-project.org/web/packages/synthpop/index.html) R package to create a synthetic version of the key variables needed to replicate all analyses in the paper.
 
 The synthetic dataset contains the same number of observations (patient-years) as our original dataset. The package uses classification and regression trees to sequentially generate variables that captures the moments and covariances of the original dataset. More details can be found at https://cran.r-project.org/web/packages/synthpop/synthpop.pdf.
 
-We include a [data dictionary](./data/data_dictionary.md) describing each of the individual variables. 
+We include a [data dictionary](./data/data_dictionary.md) describing each of the individual variables.
 
 
 ## Preparation
 
 - Set working directory to `dissecting-bias`
     - `cd dissecting-bias`
-- `R` environment setup:
+- R / python environment setup:
+    - Create our [conda](https://www.anaconda.com/distribution/) environment:
+        1. `conda env create -f bias.yml`
     - Install our utility package:
         1. `R CMD INSTALL plot0_0.1.tar.gz`
-- `python` environment setup:
-    - Create our conda environment:
-        1. `conda env create -f bias.yml`
 
 ## Execution
 - To replicate figures:
@@ -38,7 +37,6 @@ We include a [data dictionary](./data/data_dictionary.md) describing each of the
     - `Rscript code/figure3.R`
 - To train model and save predictions on the holdout:
     - `python code/model/main.py`
-        - Please remember to switch environment (`source activate bias`) when running `python` code.
 - To replicate tables:
     - `python code/table1.py`
     - `python code/table2.py`

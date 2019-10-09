@@ -11,24 +11,53 @@ import util
 
 
 def load_data_df():
+    """Load data dataframe.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame to use for analysis.
+
+    """
     # define filepath
     git_dir = util.get_git_dir()
     data_fp = os.path.join(git_dir, 'data', 'data_new.csv')
 
     # load df
     data_df = pd.read_csv(data_fp)
+
+    # because we removed patient
     data_df = data_df.reset_index()
     return data_df
 
 
 def get_Y_x_df(df, verbose):
+    """Get dataframe with relevant x and Y columns.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Data dataframe.
+    verbose : bool
+        Print statistics of features.
+
+    Returns
+    -------
+    all_Y_x_df : pd.DataFrame
+        Dataframe with x (features) and y (labels) columns
+    x_column_names : list
+        List of all x column names (features).
+    Y_predictors : list
+        All labels (Y) to predict.
+
+    """
     # cohort columns
     cohort_cols = ['index']
 
     # features (x)
     x_column_names = features.get_all_features(df, verbose)
 
-    # add log columns
+    # include log columns
     df['log_cost_t'] = util.convert_to_log(df, 'cost_t')
     df['log_cost_avoidable_t'] = util.convert_to_log(df, 'cost_avoidable_t')
 
@@ -68,7 +97,6 @@ def main():
     git_dir = util.get_git_dir()
     OUTPUT_DIR = util.create_dir(os.path.join(git_dir, 'results'))
 
-    # train models
     # define parameters
     include_race = False
     n_folds = 10

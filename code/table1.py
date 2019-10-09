@@ -45,7 +45,7 @@ def get_table1(df, race, total_n):
     # Care management program
     print('....adding care management program')
     table1_list.append(('Care management program', '---'))
-    df['risk_score_t_percentile'] = util.assign_percentile(df, 'risk_score_t').astype(int)
+    df['risk_score_t_percentile'] = util.convert_to_percentile(df, 'risk_score_t').astype(int)
     table1_list.append(('Algorithm score (percentile)', '{:.0f}'.format(df['risk_score_t_percentile'].mean())))
     table1_list.append(('Race composition of program (%)', '{:.1f}'.format(n / total_n * 100)))
 
