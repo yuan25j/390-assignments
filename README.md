@@ -24,6 +24,8 @@ We include a [data dictionary](./data/data_dictionary.md) describing each of the
 - R / python environment setup:
     - Create our [conda](https://www.anaconda.com/distribution/) environment:
         1. `conda env create -f bias.yml`
+    - Activate environment:
+        1. `conda activate bias`
     - Install our utility package:
         1. `R CMD INSTALL plot0_0.1.tar.gz`
 
