@@ -32,7 +32,7 @@ We include a [data dictionary](./data/data_dictionary.md) describing each of the
 ## Execution
 Remember to activate our conda environment prior to executing:
 ```
-source activate bias
+conda activate bias
 ```
 
 - To replicate figures:
