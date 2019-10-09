@@ -28,6 +28,11 @@ We include a [data dictionary](./data/data_dictionary.md) describing each of the
         1. `R CMD INSTALL plot0_0.1.tar.gz`
 
 ## Execution
+Remember to activate our conda environment prior to executing:
+```
+source activate bias
+```
+
 - To replicate figures:
     - `Rscript code/figure1/figure1.R`
         - 'figure1.R' imports results from `figure1b.R`, but there's no need to
