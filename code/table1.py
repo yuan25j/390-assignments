@@ -59,7 +59,6 @@ def get_table1(df, race, total_n):
     table1_list.append(('Mean biomarkers', '---'))
     table1_list.append(('HbA1c', '{:.1f}'.format(df['ghba1c_mean_t'].mean())))
     table1_list.append(('Systolic BP', '{:.1f}'.format(df['bps_mean_t'].mean())))
-    # table1_list.append(('Diastolic BP', df['??'].mean()))  # CHECK WITH ZOEY
     table1_list.append(('Creatinine', '{:.1f}'.format(df['cre_mean_t'].mean())))
     table1_list.append(('Hematocrit', '{:.1f}'.format(df['hct_mean_t'].mean())))
     table1_list.append(('LDL', '{:.1f}'.format(df['ldl_mean_t'].mean())))

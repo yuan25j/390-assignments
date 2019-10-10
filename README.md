@@ -22,12 +22,12 @@ We include a [data dictionary](./data/data_dictionary.md) describing each of the
 - Set working directory to `dissecting-bias`
     - `cd dissecting-bias`
 - R / python environment setup:
-    - Create our [conda](https://www.anaconda.com/distribution/) environment:
-        1. `conda env create -f bias.yml`
-    - Activate environment:
-        1. `conda activate bias`
-    - Install our utility package:
-        1. `R CMD INSTALL plot0_0.1.tar.gz`
+    1. Create our [conda](https://www.anaconda.com/distribution/) environment:
+        - `conda env create -f bias.yml`
+    1. Activate environment:
+        - `conda activate bias`
+    1. Install our utility package:
+        - `R CMD INSTALL plot0_0.1.tar.gz`
 
 ## Execution
 Remember to activate our conda environment prior to executing:
