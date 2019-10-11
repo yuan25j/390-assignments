@@ -75,7 +75,7 @@ def get_table1(df, race, total_n):
     table1_list.append(('Hypothyroid', '{:.2f}'.format(df['hypothyroid_elixhauser_tm1'].mean())))
     table1_list.append(('Obesity', '{:.2f}'.format(df['obesity_elixhauser_tm1'].mean())))
     table1_list.append(('Pulmonary disease', '{:.2f}'.format(df['pulmonarydz_romano_tm1'].mean())))
-    table1_list.append(('Cancer', '{:.2f}'.format(df['tumor_romano_tm1'].mean())))  # CHECK WITH ZOEY
+    table1_list.append(('Cancer', '{:.2f}'.format(df['tumor_romano_tm1'].mean())))
     table1_list.append(('Depression', '{:.2f}'.format(df['depression_elixhauser_tm1'].mean())))
     table1_list.append(('Anemia', '{:.2f}'.format(df['anemia_elixhauser_tm1'].mean())))
     table1_list.append(('Arthritis', '{:.2f}'.format(df['arthritis_elixhauser_tm1'].mean())))
