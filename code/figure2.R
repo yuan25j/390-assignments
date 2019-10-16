@@ -19,7 +19,7 @@ default_in_percentile <- 97
 additional_screen_percentile <- 55
 
 # plotting parameters
-color_scheme <- c("#000000","#999999") 
+color_scheme <- c("#764885","#ffa600") 
 linetype_scheme <- c('twodash', 'solid') 
 subtitlename <- ''
 groupbycolorname <- 'Race'
@@ -28,7 +28,7 @@ xname <- 'Percentile of Algorithm Risk Score'
 ################################################################################
 # bps 
 ################################################################################
-# compute ----------------------------------------------------------------------
+# computt ----------------------------------------------------------------------
 dt_raw[, bps_above_139_ind := ifelse(bps_mean_t > 139, 1, 0)]
 dt_raw$bps_above_139_ind[is.na(dt_raw$bps_above_139_ind)] <- 0
 
@@ -43,9 +43,9 @@ dt_bps <- unique(dt_bps, by = c('race', 'percentile', 'quantile'))
 dt_bps[, quantile := quantile - 10]
 
 # labels -----------------------------------------------------------------------
-titlename <- '(a) Hypertension: fraction clinic measurement \u2265 140 mmHg'
-yname <- 'Fraction with a BPS value \u2265 140 Sys BP (mmHg)'
-avlocation_threshold <- 0.13
+titlename <- '(a) Hypertension: Fraction clinic visits with SBP >139 mmHg'
+yname <- 'Fraction with uncontrolled blood pressure'
+avlocation_threshold <- 0.4
 
 # plot -------------------------------------------------------------------------
 ga <- ggplot(data = dt_bps, aes(color = race, linetype = race,
@@ -60,6 +60,8 @@ ga <- ggplot(data = dt_bps, aes(color = race, linetype = race,
    scale_x_continuous(breaks = seq(0, 100, 10)) +
    scale_color_manual(values = color_scheme, name = groupbycolorname) +
    scale_linetype_manual(values = linetype_scheme, name = groupbycolorname) +
+   theme(legend.key.size = grid::unit(5,"lines")) + 
+   theme(legend.key.height= grid::unit(2,"lines")) + 
    geom_point(aes(x = percentile, y = col_to_mean_by_percentile_by_race), alpha = 0.4, shape = 4) +
    geom_point(aes(x = quantile, y = col_to_mean_by_quantile_by_race), size = 2) +
    geom_smooth(aes(x = percentile, y = col_to_mean_by_percentile_by_race), se = TRUE, span = 0.99) +
@@ -88,7 +90,7 @@ dt_hba1c[, quantile := quantile - 10]
 titlename <- '(b) Diabetes severity: HbA1c'
 yname <- 'Mean HbA1c (%)'
 bvlocation_threshold <- quantile(dt_hba1c$col_to_mean_by_percentile_by_race, 0.99, na.rm = T)
-bvlocation_threshold <- 7.2
+bvlocation_threshold <- 7.5
 
 # plot -------------------------------------------------------------------------
 gb <- ggplot(data = dt_hba1c, aes(color = race, linetype = race,
@@ -127,7 +129,7 @@ dt_hemo <- MyComputePlotDF(dt_raw,
 dt_hemo <- unique(dt_hemo, by = c('race', 'percentile', 'quantile'))
 
 # labels -----------------------------------------------------------------------
-titlename <- '(e) Anemia severity: hemotocrit'
+titlename <- '(e) Anemia severity: hematocrit'
 dt_hemo[, quantile := quantile - 10]
 yname <- 'Mean Hematocrit (%)'
 cvlocation_threshold <- 45 
@@ -173,8 +175,8 @@ dt_crea <- unique(dt_crea, by = c('race', 'percentile', 'quantile'))
 
 # labels -----------------------------------------------------------------------
 titlename <- '(d) Renal failure: creatinine (log)'
-yname <- 'Log 10 of Creatinine (mg/dL)'
-dvlocation_threshold <- 0.15
+yname <- 'Mean creatinine (log mg/dL)'
+dvlocation_threshold <- 0.2
 
 # plot ------------------------------------------------------------------------
 gd <- ggplot(data = dt_crea, aes(color = race, linetype = race,
@@ -225,7 +227,7 @@ dt_ldl[, quantile := quantile - 10]
 dt_ldl <- unique(dt_ldl, by = c('race', 'ventile', 'quantile'))
 
 # labels -----------------------------------------------------------------------
-titlename <- '(c) Bad cholestrol: LDL '
+titlename <- '(c) Bad cholesterol: LDL '
 yname <- 'Mean LDL (mg/dL)'
 evlocation_threshold <- 115
 
@@ -256,10 +258,26 @@ gc <- ggplot(data = dt_ldl, aes(color = race, linetype = race,
 ################################################################################
 # export 
 ################################################################################
+# create a common legend 
+glegend <- function(a.gplot){
+    tab <- ggplot_gtable(ggplot_build(a.gplot))
+    legd <- which(sapply(tab$grobs, function(x) x$name) == "guide-box")
+    legend <- tab$grobs[[legd]]
+    return(legend)}
+
+commonlegend<-glegend(ga)
+
+fig2 <- grid.arrange(ga + theme(legend.position="none"), 
+                        gb + theme(legend.position="none"), 
+                        gc + theme(legend.position="none"), 
+                        gd + theme(legend.position="none"), 
+                        ge + theme(legend.position="none"), 
+                        commonlegend, ncol = 2, respect=TRUE)
+
 # png
-ggsave(paste0(res_dir, 'figure2.png'), grid.arrange(ga, gb, gc, gd, ge, ncol = 2, respect=TRUE), width = 14, height = 28)
+ggsave(paste0(res_dir, 'figure2.png'), device = 'png', fig2, width = 14, height = 28)
 # eps
-ggsave(paste0(res_dir, 'figure2.eps'), device = 'eps',grid.arrange(ga, gb, gc, gd, ge, ncol = 2, respect=TRUE), width = 14, height = 28)
+ggsave(paste0(res_dir, 'figure2.eps'), device = 'eps', fig2, width = 14, height = 28)
 
 
 # export ----------------------------------------------------------------------
