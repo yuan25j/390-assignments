@@ -40,7 +40,7 @@ subtitlename <- ''
 groupbycolorname <- 'Race'
 xname <- 'Percentile of Algorithm Risk Score'
 yname <- 'Mean Total Medical Expenditure'
-color_scheme <- c("#000000","#999999") 
+color_scheme <- c("#764885","#ffa600") 
 linetype_scheme <- c('twodash', 'solid') 
 
 default_in_percentile <- 97
@@ -63,7 +63,10 @@ ga <- ggplot(data = df, aes(color = race, linetype = race,
    scale_y_continuous(breaks = brkk, labels = labb, limits = c(7,11))+ 
    scale_color_manual(values = color_scheme, name = groupbycolorname) +
    scale_linetype_manual(values = linetype_scheme, name = groupbycolorname) +
-   geom_point(aes(x = percentile, y = col_to_mean_by_percentile_by_race), alpha = 0.4, shape = 4) +
+   theme(legend.position="bottom") + 
+   theme(legend.key.size = grid::unit(5,"lines")) + 
+   theme(legend.key.height= grid::unit(1,"lines")) + 
+   geom_point(aes(x = percentile, y = col_to_mean_by_percentile_by_race), shape = 4) +
    geom_point(aes(x = quantile, y = col_to_mean_by_quantile_by_race), size = 2) +
    geom_smooth(aes(x = percentile, y = col_to_mean_by_percentile_by_race), se = F, span = 0.45) +
    geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race, 
@@ -121,7 +124,7 @@ gb <- ggplot(data = DF, aes(color = race, group = race, linetype = race))  +
    scale_y_continuous(breaks = brkk, labels = labb, limits = c(7,11))+ 
    scale_color_manual(values = color_scheme, name = groupbycolorname) +
    scale_linetype_manual(values = linetype_scheme, name = groupbycolorname) +
-   geom_point(aes(x = percentile, y = col_to_mean_by_percentile_by_race), alpha = 0.4, shape = 4) +
+   geom_point(aes(x = percentile, y = col_to_mean_by_percentile_by_race), shape = 4) +
    geom_point(aes(x = quantile, y = col_to_mean_by_quantile_by_race), size = 2) +
    geom_smooth(aes(x = percentile, y = col_to_mean_by_percentile_by_race), se = F, span = 0.55)+
    geom_pointrange(aes(x = quantile, y = col_to_mean_by_quantile_by_race, 
@@ -131,7 +134,20 @@ gb <- ggplot(data = DF, aes(color = race, group = race, linetype = race))  +
 ################################################################################
 # export 
 ################################################################################
+# create a common legend 
+glegend <- function(a.gplot){
+    tab <- ggplot_gtable(ggplot_build(a.gplot))
+    legd <- which(sapply(tab$grobs, function(x) x$name) == "guide-box")
+    legend <- tab$grobs[[legd]]
+    return(legend)}
+
+commonlegend<-glegend(ga)
+
+fig3 <- grid.arrange(arrangeGrob(ga + theme(legend.position="none"), 
+                        gb + theme(legend.position="none"), nrow = 1, respect=TRUE),
+                        commonlegend, nrow = 2, heights = c(7,1))
+
 # png
-ggsave(paste0(res_dir, 'figure3.png'), grid.arrange(ga, gb, ncol = 2, respect=TRUE), width = 14, height = 7)
+ggsave(paste0(res_dir, 'figure3.png'), device = 'png', fig3, width = 14, height = 7)
 # eps
-ggsave(paste0(res_dir, 'figure3.eps'), device = 'eps', grid.arrange(ga, gb, ncol = 2, respect=TRUE), width = 14, height = 7)
+ggsave(paste0(res_dir, 'figure3.eps'), device = 'eps', fig3, width = 14, height = 7)
