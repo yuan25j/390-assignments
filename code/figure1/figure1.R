@@ -67,7 +67,7 @@ ga <- ggplot(data = df, aes(color = race,
 ################################################################################
 # figure 1b
 ################################################################################
-source(paste0(getwd(), '/code/figure1/figure1b.R'))
+#source(paste0(getwd(), '/code/figure1/figure1b.R'))
 
 # load -------------------------------------------------------------------------
 filepath <- paste0(getwd(), '/results')
@@ -84,7 +84,7 @@ groupbycolorname <- ''
 xname <- 'Percentile of Algorithm Risk Score'
 yname <- 'Fraction Black'
 color_scheme1 <- c('#b54984', '#ff7547') 
-linetype_scheme1 <- c('solid', 'dash') 
+linetype_scheme1 <- c('solid', 'dashed') 
 group_label1 <- c("Original", "Simulated")
 
 program_size <- 90
@@ -94,13 +94,11 @@ dt_long <- dt_long[percentile >= 55]
 # plot ------------------------------------------------------------------------
 
 gb <- ggplot(data = dt_long, 
-             aes(x = percentile, y = frac, 
-                 color = before_or_after, 
-                 linetype = before_or_after,
-                 group = before_or_after)) + 
+             aes(x = percentile, y = frac, color = before_or_after, linetype =
+                 before_or_after, group = before_or_after)) + 
    theme_bw() + 
-   labs(title = titlename, subtitle = subtitlename,
-        color = groupbycolorname, x = xname, y = yname) +
+   labs(title = titlename, subtitle = subtitlename, color = groupbycolorname, x
+        = xname, y = yname) +
    scale_x_continuous(breaks = c(seq(55, 95, 5), 99)) +
    scale_y_continuous(breaks = seq(0, 1, by = 0.05)) +
    scale_color_manual(values = color_scheme1, labels = group_label1, name = groupbycolorname) +
@@ -112,7 +110,12 @@ gb <- ggplot(data = dt_long,
    geom_point(shape = 4) +
    geom_smooth(span = 0.99, se = TRUE, level = 0.95) + 
    geom_vline(aes(xintercept=default_in_percentile), colour="black", linetype="dashed") +
-   geom_text(aes(x=default_in_percentile, label="Defaulted into program", y = 0.55), colour="black", hjust = 1.2, size = 2) 
+   geom_text(aes(x=default_in_percentile, label="Defaulted into program", y =
+                 0.45), colour="black", hjust = 1.2, size = 2) + 
+   geom_vline(aes(xintercept=additional_screen_percentile), colour="dark gray",
+              linetype="dashed") +
+   geom_text(aes(x=additional_screen_percentile, label="Referred for screen", y
+                 = 0.45), colour="dark gray", hjust = -0.2, size = 2) 
 
 ################################################################################
 # export 
