@@ -8,6 +8,7 @@ res_dir <- paste0(getwd(), '/results/')
 
 ################################################################################
 # figure 1b 
+# 9/1/2022: Error fix in lines 70-72 (old line 69)
 ################################################################################
 setup <- function(default_in_percentile = c(95, 97)) {
 
@@ -66,7 +67,9 @@ exercise <- function(default_in_percentile){
                 # update enrolled whites 
                 upperw <- upperw[-sw,]
                 upperw <- upperw[order(gagne_sum_t),]
-                sw = sw + 1
+                ##### 9/1/2022: commenting out this step fixes the error - swapped White patient is removed from upperw in line 67... 
+                # sw = sw + 1
+                ##### ...so there is no need to increment sw counter (ever)
                 sb = sb + 1
                 switched_count = switched_count + 1
             }else{
