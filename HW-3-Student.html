@@ -659,16 +659,14 @@ interpretability.</em></p>
 <div id="section-14" class="section level2" number="2.6">
 <h2><span class="header-section-number">2.6</span> </h2>
 <p>Discuss the ways a decision tree could manifest algorithmic bias.</p>
-<p><em>A decision tree can manifest algorithmic bias if the training
-data contains historical biases or is unrepresentative of certain
-groups, leading to unequal predictions. For example, if features like
-age or socioeconomic class correlate with race or gender, the model may
-unintentionally favor or disadvantage specific demographics.
-Furthermore, like all machine learning models, applying this tree to
+<p><em>A decision tree can have bias is it is not properly pruned.
+A under pruned tree will result in overfitting of the data, meaning 
+it won't work accurately with unseen data points like test data.
+Furthermore, like all machine learning models, testing this tree on
 data not representative of the training set could lead to biased and
-incorrect results. To tie to a in class discussion, if the data results
-do not have separation, it indicates that that algorithm has bias. In
-our example, the tree uses age, a protected class.</em></p>
+incorrect results. To tie to a in class discussion on fairness, 
+if the data results do not have separation, it indicates that that 
+algorithm has bias. In our example, the tree uses age, a protected class.</em></p>
 </div>
 </div>
 <div class="footnotes footnotes-end-of-document">
