@@ -1,0 +1,250 @@
+---
+title: "HW 3"
+author: "Jiangyuan Yuan"
+date: "9/24/2024"
+output:
+  html_document:
+    number_sections: true
+  pdf_document: default
+---
+
+# 
+
+Let $E[X] = \mu$. Show that $Var[X] := E[(X-E[X])^2] = E[X^2]-(E[X])^2$. Note, all you have to do is show the second equality (the first is our definition from class). $$
+\begin{aligned}
+\text{Var}[X] &= E\left[(X - E[X])^2\right] \\
+&= E[X^2 - 2X E[X] + (E[X])^2] \\
+&= E[X^2] - 2E[X]E[X] + (E[X])^2 \\
+&= E[X^2] - (E[X])^2
+\end{aligned}
+$$
+
+In the computational section of this homework, we will discuss support vector machines and tree-based methods. I will begin by simulating some data for you to use with SVM.
+
+```{r}
+library(e1071)
+set.seed(1) 
+x=matrix(rnorm(200*2),ncol=2)
+x[1:100,]=x[1:100,]+2
+x[101:150,]=x[101:150,]-2
+y=c(rep(1,150),rep(2,50))
+dat=data.frame(x=x,y=as.factor(y))
+plot(x, col=y)
+
+```
+
+## 
+
+Quite clearly, the above data is not linearly separable. Create a training-testing partition with 100 random observations in the training partition. Fit an svm on this training data using the radial kernel, and tuning parameters $\gamma=1$, cost $=1$. Plot the svm on the training data.
+
+```{r}
+set.seed(1)
+total_obs <- nrow(dat)
+train <- sample(1:total_obs, 100)
+train_data <- dat[train, ]
+test <- dat[-train, ]
+svmfit <- svm(y ~ ., data = train_data, kernel = "radial", gamma = 1, cost = 1,scale = FALSE)
+
+make.grid = function(x, n = 100) {
+  grange = apply(x, 2, range)
+  x1 = seq(from = grange[1,1], to = grange[2,1], length = n)
+  x2 = seq(from = grange[1,2], to = grange[2,2], length = n)
+  expand.grid(x.1 = x1, x.2 = x2)
+}
+xgrid = make.grid(x)
+
+#overlaying prediction on the grid
+ygrid = predict(svmfit, xgrid)
+plot(xgrid, col = c("red","blue")[as.numeric(ygrid)], pch = 20, cex = .2)
+points(x, col = y + 3, pch = 19)
+points(x[svmfit$index,], pch = 5, cex = 2)
+
+
+
+```
+
+## 
+
+Notice that the above decision boundary is decidedly non-linear. It seems to perform reasonably well, but there are indeed some misclassifications. Let's see if increasing the cost [^1] helps our classification error rate. Refit the svm with the radial kernel, $\gamma=1$, and a cost of 10000. Plot this svm on the training data.
+
+[^1]: Remember this is a parameter that decides how smooth your decision boundary should be
+
+```{r}
+# Fit SVM with higher cost
+svmfit_high_cost <- svm(y ~ ., data = train_data, kernel = "radial", gamma = 1, cost = 10000)
+
+# Predict over the grid
+ygrid_high_cost <- predict(svmfit_high_cost, xgrid)
+
+# Plot the decision boundary and training data
+plot(xgrid, col = as.numeric(ygrid_high_cost), pch = 20, cex = 0.5,
+     xlab = "X1", ylab = "X2", main = "Cost = 10000")
+points(train_data[,1:2], col = as.numeric(train_data$y) + 1, pch = 19)
+
+# Highlight support vectors
+sv_indices_high_cost <- svmfit_high_cost$index
+points(train_data[sv_indices_high_cost, 1:2], pch = 5, cex = 2)
+
+
+```
+
+## 
+
+It would appear that we are better capturing the training data, but comment on the dangers (if any exist), of such a model.
+
+*While increasing the cost parameter improves the model's fit to the training data, it poses the danger of overfitting. An overfitted model captures noise and outliers, making it too tailored to the training set and reducing its ability to generalize to new, unseen data. This can lead to poor performance on the testing data despite excellent performance on the training data. In our specific example, it seems to nearly capture every variable, altering the hyperplane in ways that might not be helpful with untested data points.*
+
+## 
+
+Create a confusion matrix by using this svm to predict on the current testing partition. Comment on the confusion matrix. Is there any disparity in our classification results?\
+\
+The confusion matrix reveals that the model correctly classified 19 out of 21 instances of Class 2, demonstrating strong performance for the minority class. However, it misclassified 12 out of 79 instances of Class 1 as Class 2, indicating that the majority class is prone to errors. This suggests that while the model effectively recognizes the minority class, it struggles with accurately identifying the majority class.
+
+```{r}
+#remove eval = FALSE in above
+table(true=dat[-train,"y"], pred=predict(svmfit_high_cost, newdata=dat[-train,]))
+```
+
+## 
+
+Is this disparity because of imbalance in the training/testing partition? Find the proportion of class `2` in your training partition and see if it is broadly representative of the underlying 25% of class 2 in the data as a whole.
+
+```{r}
+
+prop_class2_train <- sum(train_data$y == 2) / nrow(train_data)
+prop_class2_train
+```
+
+*This comparsion shows that increasing the proportion of Class 2 in the training dataset from 25% to 29%. Although 29% is an increase in the minority class, this change would not be overly significant on the SVM model. The testing and training partitions are relatively similar.*
+
+## 
+
+Let's try and balance the above to solutions via cross-validation. Using the `tune` function, pass in the training data, and a list of the following cost and $\gamma$ values: {0.1, 1, 10, 100, 1000} and {0.5, 1,2,3,4}. Save the output of this function in a variable called `tune.out`.
+
+```{r}
+
+set.seed(1)
+tune.out <- tune(svm, y ~ ., data = train_data, kernel = "radial",
+                ranges = list(cost = c(0.1, 1, 10, 100, 1000),
+                              gamma = c(0.5, 1, 2, 3, 4)))
+
+```
+
+I will take `tune.out` and use the best model according to error rate to test on our data. I will report a confusion matrix corresponding to the 100 predictions.
+
+```{r}
+table(true=dat[-train,"y"], pred=predict(tune.out$best.model, newdata=dat[-train,]))
+```
+
+## 
+
+Comment on the confusion matrix. How have we improved upon the model in question 2 and what qualifications are still necessary for this improved model.
+
+The updated confusion matrix shows significant improvements over the previous model. For Class 1, the number of misclassifications has decreased from 12 to 7, enhancing the model's accuracy for the majority class. This improvement suggests that cross-validation and parameter tuning effectively balanced the model, reducing bias and enhancing its ability to correctly classify both classes. . Further refinements, such as exploring different kernel functions or adjusting class weights, may also help in maintaining and enhancing the model's accuracy in both the testing data and other datasets.
+
+# 
+
+Let's turn now to decision trees.
+
+```{r}
+
+library(kmed)
+data(heart)
+heart <- heart
+library(tree)
+names(heart)
+str(heart$cp)
+```
+
+## 
+
+The response variable is currently a categorical variable with four levels. Convert heart disease into binary categorical variable. Then, ensure that it is properly stored as a factor.
+
+```{r}
+# Create a binary variable for heart disease
+hearts_binary <- ifelse(heart$cp %in% c(1, 2), "Yes", "No")
+heart = data.frame(heart, hearts_binary)
+heart_fac <- as.factor(hearts_binary)
+heart = data.frame(heart, heart_fac)
+
+
+
+```
+
+## 
+
+Train a classification tree on a 240 observation training subset (using the seed I have set for you). Plot the tree.
+
+```{r}
+set.seed(101)
+
+train=sample(1:nrow(heart), 240)
+
+tree.heart = tree(heart_fac~.-cp, heart, subset=train)
+plot(tree.heart)
+text(tree.heart, pretty = 0)
+
+
+
+```
+
+\
+
+## 
+
+Use the trained model to classify the remaining testing points. Create a confusion matrix to evaluate performance. Report the classification error rate.
+
+```{r}
+
+
+tree.pred = predict(tree.heart, heart[-train,], type="class")
+conf_matrix = with(heart[-train,], table(tree.pred, heart_fac))
+conf_matrix
+
+error_rate = 1 - sum(diag(conf_matrix)) / sum(conf_matrix)
+error_rate
+```
+
+## 
+
+Above we have a fully grown (bushy) tree. Now, cross validate it using the `cv.tree` command. Specify cross validation to be done according to the misclassification rate. Choose an ideal number of splits, and plot this tree. Finally, use this pruned tree to test on the testing set. Report a confusion matrix and the misclassification rate.
+
+```{r}
+
+set.seed(101)
+
+cv.heart = cv.tree(tree.heart, FUN = prune.misclass)
+
+plot(cv.heart$size, cv.heart$dev, type = "b")
+
+prune.heart = prune.misclass(tree.heart, best = 8)
+
+# Plot the pruned tree
+plot(prune.heart)
+text(prune.heart, pretty = 0)
+
+# Test the pruned tree on the testing set
+test_data <- heart[-train, ]
+tree.pred = predict(prune.heart, test_data, type = "class")
+
+# Confusion matrix
+conf_matrix <- table(tree.pred, test_data$heart_fac)
+conf_matrix
+
+# Calculate the misclassification rate
+misclass_rate = 1 - sum(diag(conf_matrix)) / sum(conf_matrix)
+cat("Misclassification Rate:", misclass_rate, "\n")
+
+```
+
+## 
+
+Discuss the trade-off in accuracy and interpretability in pruning the above tree.
+
+*Pruning the tree improves its interpretability by reducing complexity, making it easier to understand and explain, as it focuses on the most significant splits. However, this comes at the cost of accuracy, as seen in the increase in the misclassification rate from 31.6% in the unpruned tree to 43.9% in the pruned tree. While the unpruned tree better captures the patterns in the training data, it is more complex and prone to overfitting, whereas the pruned tree is simpler and less likely to overfit but may underperform in classification accuracy. This trade-off reflects the balance between a bushy tree with more accuracy or a pruned tree with more interpretability.*
+
+## 
+
+Discuss the ways a decision tree could manifest algorithmic bias.
+
+*A decision tree can manifest algorithmic bias if the training data contains historical biases or is unrepresentative of certain groups, leading to unequal predictions. For example, if features like age or socioeconomic class correlate with race or gender, the model may unintentionally favor or disadvantage specific demographics. Furthermore, like all machine learning models, applying this tree to data not representative of the training set could lead to biased and incorrect results. To tie to a in class discussion, if the data results do not have separation, it indicates that that algorithm has bias. In our example, the tree uses age, a protected class.*
