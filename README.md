@@ -4,7 +4,7 @@ The final project writeup can be found in [`FinalWriteup.pdf`](FinalWriteup.pdf)
 
 ## Data and Relevant Files
 
-All data and other relevant files are located in the `390FinalProj/dissecting-bias` directory.
+All data and other relevant files are located in the `390FinalProj/dissecting-bias` directory. Most of these files are inherited from the original authors. Details can be found at the following readme https://gitlab.com/labsysmed/dissecting-bias/-/blob/master/README.md?ref_type=heads 
 
 ## Replicating Changes for Figures 1a and 1b
 
